@@ -1,0 +1,9 @@
+import { serial, varchar } from "drizzle-orm/mysql-core/columns";
+import { mysqlTable } from "drizzle-orm/mysql-core/table";
+
+export const albums = mysqlTable("Albums", {
+  id: serial("Id").primaryKey().notNull(),
+  title: varchar("Title", { length: 256 }).notNull(),
+  location: varchar("Location", { length: 100 }).notNull(),
+  dataPicker: varchar("Datapicker",{length:100}).notNull(),
+});

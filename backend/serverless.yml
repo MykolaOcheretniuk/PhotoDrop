@@ -1,0 +1,39 @@
+service: PhotoDrop
+
+frameworkVersion: "3"
+
+plugins:
+  - serverless-esbuild
+  - serverless-plugin-existing-s3
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  profile: myawff
+  region: us-east-1
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action: "dynamodb:*"
+          Resource: "*"
+        - Effect: Allow
+          Action:
+            - s3:GetObject
+            - s3:PutObject
+          Resource:
+            - "arn:aws:s3:::photo-drop-images/*"
+  environment:
+    PHOTO_DROP_DB_USERNAME: ${ssm:PHOTO_DROP_DB_USERNAME}
+    PHOTO_DROP_DB_PASSWORD: ${ssm:PHOTO_DROP_DB_PASSWORD}
+    PHOTO_DROP_DB_ENDPOINT: ${ssm:PHOTO_DROP_DB_ENDPOINT}
+    PHOTO_DROP_DB_PORT: ${ssm:DEFAULT_DB_PORT}
+    PHOTO_DROP_DB_NAME: PhotoDropDB
+    ACCESS_TOKEN_SECRET: ${ssm:ACCESS_TOKEN_SECRET}
+    REFRESH_TOKEN_SECRET: ${ssm:REFRESH_TOKEN_SECRET}
+    BUCKET_NAME: photo-drop-images
+    WATERMARK_KEY: ${ssm:WATERMARK_KEY}
+    REGION: us-east-1
+
+functions: ${file(yml/functions.yml)}
+resources: ${file(yml/resources.yml)}
