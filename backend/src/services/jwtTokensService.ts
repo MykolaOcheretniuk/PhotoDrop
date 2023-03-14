@@ -2,9 +2,9 @@ import * as jwt from "jsonwebtoken";
 import { TokensResponse } from "src/models/tokensResponse";
 
 class JwtTokensService {
-  generateTokens = (personId: string,role:string): TokensResponse => {
+  generateTokens = (personId: string, role: string): TokensResponse => {
     const accessToken = jwt.sign(
-      { personId: personId ,personRole:role},
+      { personId: personId, personRole: role },
       process.env.ACCESS_TOKEN_SECRET as string,
       { expiresIn: "1d" }
     );

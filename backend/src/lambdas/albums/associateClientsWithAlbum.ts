@@ -5,9 +5,7 @@ import {
 import { Roles } from "src/enums/roles";
 import authService from "src/services/authService";
 import { ApiError } from "src/errors/apiError";
-import jwtTokensService from "src/services/jwtTokensService";
-import { JwtPayload } from "jsonwebtoken";
-import photosService from "src/services/photosService";
+import albumsService from "src/services/albumsService";
 
 export const handler = async (
   event: APIGatewayProxyEvent
@@ -19,27 +17,17 @@ export const handler = async (
         body: JSON.stringify(`Authorization header is missing.`),
       };
     }
-    if (!event.pathParameters) {
+    if (!event.body) {
       return {
         statusCode: 400,
-        body: JSON.stringify(`Path parameters is required`),
-      };
-    }
-    const { albumId } = event.pathParameters;
-    if (!albumId) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify(`Incorrect path parameters`),
+        body: JSON.stringify(`JSON body is missing.`),
       };
     }
     const { Authorization: authToken } = event.headers;
+    const { albumId, clients } = JSON.parse(event.body);
     await authService.checkAuth(authToken, Roles.PHOTOGRAPHER);
-    const tokenPayload = (await jwtTokensService.validateAccessToken(
-      authToken
-    )) as JwtPayload;
-    const { personId } = tokenPayload;
-    const result = await photosService.getAlbumPhotos(+albumId, personId);
-    return { statusCode: 200, body: JSON.stringify(result) };
+    await albumsService.addClients(albumId, clients);
+    return { statusCode: 200, body: JSON.stringify("Clients added!") };
   } catch (err) {
     if (err instanceof ApiError) {
       return {

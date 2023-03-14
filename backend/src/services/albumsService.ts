@@ -1,10 +1,12 @@
 import albumsRepository from "src/db/repositories/albumsRepository";
+import personsRepository from "src/db/repositories/personsRepository";
 import { Album } from "src/entities/album";
 import { AlbumError } from "src/errors/albumError";
 import { ApiError } from "src/errors/apiError";
 import { AlbumInfo } from "src/models/album/album";
 import { AlbumDetails } from "src/models/album/albumDetails";
 import { CreateAlbumModel } from "src/models/album/createAlbumModel";
+import photosService from "./photosService";
 
 class AlbumsService {
   create = async (albumModel: CreateAlbumModel, creatorId: string) => {
@@ -25,7 +27,10 @@ class AlbumsService {
     );
     return result;
   };
-  getById = async (albumId: number): Promise<AlbumDetails> => {
+  getById = async (
+    albumId: number,
+    personId: string
+  ): Promise<AlbumDetails> => {
     const result = await albumsRepository.getById(albumId);
     if (!result) {
       throw ApiError.NotFound("Album");
@@ -34,7 +39,8 @@ class AlbumsService {
     if (!id) {
       throw AlbumError.IncorrectValue("Id");
     }
-    return Object.assign(result, { id: id });
+    const photos = await photosService.getAlbumPhotos(albumId, personId);
+    return Object.assign(result, { id: id, photos: photos });
   };
   getByTitle = async (title: string): Promise<AlbumInfo> => {
     const album = await albumsRepository.getByTitle(title);
@@ -46,6 +52,19 @@ class AlbumsService {
       throw AlbumError.IncorrectValue("Id");
     }
     return Object.assign(album, { id: id });
+  };
+  addClients = async (albumId: number, clientIds: string[]) => {
+    const album = await albumsRepository.getById(albumId);
+    if (!album) {
+      throw ApiError.NotFound("Album");
+    }
+    for (let i = 0; i < clientIds.length; i++) {
+      const client = await personsRepository.getById(clientIds[i]);
+      if (!client) {
+        throw ApiError.NotFound(`Client with id:${clientIds[i]}`);
+      }
+      await albumsRepository.associateWithPerson(albumId, clientIds[i], false);
+    }
   };
 }
 

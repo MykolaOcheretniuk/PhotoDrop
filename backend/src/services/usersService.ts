@@ -8,7 +8,7 @@ class UsersService {
     const userModels: UserModel[] = users.map((user) => {
       const { fullName, email, phoneNumber } = user;
       if (!fullName || !email || !phoneNumber) {
-        throw ApiError.IsNull("User");
+        throw ApiError.IsNull(`${phoneNumber}`);
       }
       return Object.assign(
         {

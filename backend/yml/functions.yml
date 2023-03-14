@@ -55,12 +55,12 @@ UploadPhotos:
   memorySize: 1000
   timeout: 10
 
-GetAlbumPhotos:
-  handler: src/lambdas/photos/getAlbumPhotos.handler
+AssociateClientsWithAlbum:
+  handler: src/lambdas/albums/associateClientsWithAlbum.handler
   events:
     - http:
-        path: album/{albumId}/photos
-        method: get
+        path: album/addClients
+        method: post
         cors: true
 
 

@@ -25,7 +25,10 @@ class AuthService {
     if (!isPasswordCorrect) {
       throw PhotographerError.WrongPassword();
     }
-    const tokens = jwtTokensService.generateTokens(personId,Roles.PHOTOGRAPHER);
+    const tokens = jwtTokensService.generateTokens(
+      personId,
+      Roles.PHOTOGRAPHER
+    );
     await refreshTokensStorage.addRefreshToken(personId, tokens.refreshToken);
     return tokens;
   };
@@ -42,7 +45,10 @@ class AuthService {
     if (refreshToken != tokenFromDb) {
       throw TokensError.LegacyRefreshToken();
     }
-    const tokens = jwtTokensService.generateTokens(personId,Roles.PHOTOGRAPHER);
+    const tokens = jwtTokensService.generateTokens(
+      personId,
+      Roles.PHOTOGRAPHER
+    );
     await refreshTokensStorage.addRefreshToken(personId, tokens.refreshToken);
     return tokens;
   };
@@ -57,8 +63,8 @@ class AuthService {
     }
     const personRole = await rolesRepository.personRole(personId);
     const { title: roleTitle } = personRole;
-    if (roleTitle != role) {
-      throw PhotographerError.IncorrectRole(roleTitle as string);
+    if (roleTitle !== role) {
+      throw PhotographerError.IncorrectRole(role as string);
     }
   };
 }

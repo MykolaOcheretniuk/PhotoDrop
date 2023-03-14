@@ -2,10 +2,11 @@ import {
   APIGatewayProxyEvent,
   APIGatewayProxyResult,
 } from "aws-lambda/trigger/api-gateway-proxy";
-import { Roles } from "src/enums/roles";
+import { JwtPayload } from "jsonwebtoken";
 import { ApiError } from "src/errors/apiError";
 import albumsService from "src/services/albumsService";
 import authService from "src/services/authService";
+import jwtTokensService from "src/services/jwtTokensService";
 
 export const handler = async (
   event: APIGatewayProxyEvent
@@ -18,15 +19,19 @@ export const handler = async (
       };
     }
     const { Authorization: authToken } = event.headers;
-    await authService.checkAuth(authToken, Roles.PHOTOGRAPHER);
     if (!event.queryStringParameters) {
       return {
         statusCode: 400,
         body: JSON.stringify(`Query string parameters is missing.`),
       };
     }
+    const tokenPayload = (await jwtTokensService.validateAccessToken(
+      authToken
+    )) as JwtPayload;
+    const { personId, personRole } = tokenPayload;
+    await authService.checkAuth(authToken, personRole);
     const id = event.queryStringParameters["id"] as string;
-    const album = await albumsService.getById(+id);
+    const album = await albumsService.getById(+id, personId);
     return { statusCode: 200, body: JSON.stringify(album) };
   } catch (err) {
     if (err instanceof ApiError) {

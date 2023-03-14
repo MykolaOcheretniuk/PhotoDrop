@@ -50,10 +50,6 @@ class PhotosService {
     albumId: number,
     personId: string
   ): Promise<PhotoModel[]> => {
-    const album = await albumsRepository.getById(albumId);
-    if (!album) {
-      throw ApiError.NotFound("Album");
-    }
     const isAlbumActivated = await albumsRepository.isAlbumActivated(
       personId,
       albumId
