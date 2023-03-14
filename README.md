@@ -73,3 +73,24 @@
     curl --request GET \
     --url https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/albums \
     --header 'Authorization: JWT-AUTH-Token'
+
+## Upload Photos
+    https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/photos
+
+    -POST Request
+
+    Required JSON Body:
+    {
+        "albumId":4,
+        "photos": [
+            {
+                "name": "name.jpg",
+                "type": "image/jpeg",
+                "data": "<base64-encoded-image-data>"
+            },
+            {
+                "name": "name2.jpg",
+                "type": "image/jpeg",
+                "data": "<base64-encoded-image-data>"
+            }
+        ]
