@@ -7,12 +7,8 @@ export const photos = mysqlTable("Photos", {
   albumId: bigint("AlbumId", { mode: "number" })
     .references(() => albums.id)
     .notNull(),
-  originalPhotoKey: varchar("OriginalPhotoKey", { length: 256 }).notNull(),
-  watermarkedPhotoKey: varchar("WatermarkedPhotoKey", {
-    length: 256,
-  }).notNull(),
-  thumbnailKey: varchar("ThumbnailKey", { length: 256 }).notNull(),
-  watermarkedThumbnailKey: varchar("WatermarkedThumbnailKey", {
+  albumTitle: varchar("AlbumTitle", { length: 256 }).notNull(),
+  photoName: varchar("PhotoName", {
     length: 256,
   }).notNull(),
 });

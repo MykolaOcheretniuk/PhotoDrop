@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm/expressions";
+import { and, eq } from "drizzle-orm/expressions";
 import { Album } from "src/entities/album";
 import { AlbumInfo } from "src/models/album/album";
 import { albums } from "../schema/album";
@@ -18,13 +18,11 @@ class AlbumsRepository extends BaseRepository<Album> {
     personId: string,
     isActivated: boolean
   ) => {
-    await this.db
-      .insert(personAlbums)
-      .values({
-        personId: personId,
-        albumId: albumId,
-        isActivated: isActivated,
-      });
+    await this.db.insert(personAlbums).values({
+      personId: personId,
+      albumId: albumId,
+      isActivated: isActivated,
+    });
   };
   getAllPhotographerAlbums = async (personId: string): Promise<AlbumInfo[]> => {
     const result = await this.db
@@ -44,6 +42,24 @@ class AlbumsRepository extends BaseRepository<Album> {
       .from(albums)
       .where(eq(albums.title, title));
     return album[0];
+  };
+  isAlbumActivated = async (
+    personId: string,
+    albumId: number
+  ): Promise<boolean> => {
+    const result = await this.db
+      .select({
+        isActivated: personAlbums.isActivated,
+      })
+      .from(personAlbums)
+      .where(
+        and(
+          eq(personAlbums.personId, personId),
+          eq(personAlbums.albumId, albumId)
+        )
+      );
+    const { isActivated } = result[0];
+    return isActivated;
   };
 }
 

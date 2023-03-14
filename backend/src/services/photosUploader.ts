@@ -1,6 +1,6 @@
 import albumsRepository from "src/db/repositories/albumsRepository";
 import { ApiError } from "src/errors/apiError";
-import { UploadPhoto } from "src/models/album/photos/uploadPhoto";
+import { UploadPhoto } from "src/models/photos/uploadPhoto";
 import s3Service from "./s3Service";
 
 export class PhotosUploader {

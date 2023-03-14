@@ -45,7 +45,6 @@ GetAllAlbums:
         method: get
         cors: true
 
-
 UploadPhotos:
   handler: src/lambdas/photos/uploadMany.handler
   events:
@@ -55,6 +54,15 @@ UploadPhotos:
         cors: true
   memorySize: 1000
   timeout: 10
+
+GetAlbumPhotos:
+  handler: src/lambdas/photos/getAlbumPhotos.handler
+  events:
+    - http:
+        path: album/{albumId}/photos
+        method: get
+        cors: true
+
 
 AddWatermarkAndThumbnailAddToDb:
   handler: src/lambdas/photos/addPhoto.handler

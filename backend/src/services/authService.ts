@@ -25,7 +25,7 @@ class AuthService {
     if (!isPasswordCorrect) {
       throw PhotographerError.WrongPassword();
     }
-    const tokens = jwtTokensService.generateTokens(personId);
+    const tokens = jwtTokensService.generateTokens(personId,Roles.PHOTOGRAPHER);
     await refreshTokensStorage.addRefreshToken(personId, tokens.refreshToken);
     return tokens;
   };
@@ -42,7 +42,7 @@ class AuthService {
     if (refreshToken != tokenFromDb) {
       throw TokensError.LegacyRefreshToken();
     }
-    const tokens = jwtTokensService.generateTokens(personId);
+    const tokens = jwtTokensService.generateTokens(personId,Roles.PHOTOGRAPHER);
     await refreshTokensStorage.addRefreshToken(personId, tokens.refreshToken);
     return tokens;
   };

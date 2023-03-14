@@ -1,5 +1,9 @@
+import albumsRepository from "src/db/repositories/albumsRepository";
 import photosRepository from "src/db/repositories/photosRepository";
 import { Photo } from "src/entities/photo";
+import { S3Operations } from "src/enums/s3Operations";
+import { ApiError } from "src/errors/apiError";
+import { PhotoModel } from "src/models/photos/photo";
 import photoEditor from "./photoEditor";
 import s3Service from "./s3Service";
 
@@ -36,13 +40,42 @@ class PhotosService {
     await s3Service.uploadEditedPhotos(promisesResult, keys);
     const photo: Photo = {
       albumId: albumId,
-      originalPhotoKey: key,
-      watermarkedPhotoKey: watermarkedPhotoKey,
-      thumbnailKey: thumbnailKey,
-      watermarkedThumbnailKey: watermarkedThumbnailKey,
+      albumTitle: albumTitle,
+      photoName: photoName,
     };
     const result = await photosRepository.addNew(photo);
     return result;
+  };
+  getAlbumPhotos = async (
+    albumId: number,
+    personId: string
+  ): Promise<PhotoModel[]> => {
+    const album = await albumsRepository.getById(albumId);
+    if (!album) {
+      throw ApiError.NotFound("Album");
+    }
+    const isAlbumActivated = await albumsRepository.isAlbumActivated(
+      personId,
+      albumId
+    );
+    let baseKey = "watermarkedThumbnails/";
+    if (isAlbumActivated) {
+      baseKey = "thumbnails/";
+    }
+    const photos = await photosRepository.getAlbumPhotos(albumId);
+    const result = photos.map(async (photo) => {
+      const { albumTitle, photoName, id } = photo;
+      const key = baseKey + `${albumTitle}/${photoName}`;
+      const accessUrl = await s3Service.createPreSignedUrl(
+        key,
+        S3Operations.GET_OBJECT
+      );
+      if (!id) {
+        throw ApiError.IsNull("Id");
+      }
+      return { id: id, thumbnailUrl: accessUrl };
+    });
+    return await Promise.all(result);
   };
 }
 const photosService = new PhotosService();

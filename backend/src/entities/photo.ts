@@ -1,9 +1,6 @@
-export interface Photo
-{
-    id?:number,
-    albumId: number,
-    originalPhotoKey: string,
-    watermarkedPhotoKey: string,
-    thumbnailKey: string,
-    watermarkedThumbnailKey:string,
+export interface Photo {
+  id?: number;
+  albumId: number;
+  albumTitle: string;
+  photoName: string;
 }
