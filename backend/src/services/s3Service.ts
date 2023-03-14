@@ -38,7 +38,7 @@ class S3Service {
       })
       .promise();
   };
-  uploadMany = async (photos: EditedPhotoDto[], keys: string[]) => {
+  uploadEditedPhotos = async (photos: EditedPhotoDto[], keys: string[]) => {
     let i = 0;
     const promises = photos.map(async (file) => {
       const { buffer, mime } = file;

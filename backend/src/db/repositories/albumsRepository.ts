@@ -13,10 +13,18 @@ class AlbumsRepository extends BaseRepository<Album> {
       .where(eq(albums.id, albumId));
     return album[0];
   };
-  associateWithPerson = async (albumId: number, personId: string) => {
+  associateWithPerson = async (
+    albumId: number,
+    personId: string,
+    isActivated: boolean
+  ) => {
     await this.db
       .insert(personAlbums)
-      .values({ personId: personId, albumId: albumId });
+      .values({
+        personId: personId,
+        albumId: albumId,
+        isActivated: isActivated,
+      });
   };
   getAllPhotographerAlbums = async (personId: string): Promise<AlbumInfo[]> => {
     const result = await this.db

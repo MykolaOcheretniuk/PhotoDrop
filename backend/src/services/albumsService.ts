@@ -16,7 +16,7 @@ class AlbumsService {
     };
     const insertResult = await albumsRepository.addNew(newAlbum);
     const { insertId: albumId } = insertResult[0];
-    await albumsRepository.associateWithPerson(albumId, creatorId);
+    await albumsRepository.associateWithPerson(albumId, creatorId, true);
     return insertResult;
   };
   getAll = async (photographerId: string): Promise<AlbumInfo[]> => {

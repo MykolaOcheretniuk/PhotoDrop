@@ -45,13 +45,6 @@ GetAllAlbums:
         method: get
         cors: true
 
-GetPreSignedUrl:
-  handler: src/lambdas/photos/getPreSignedUrl.handler
-  events:
-    - http:
-        path: getPreSignedUrl
-        method: post
-        cors: true
 
 UploadPhotos:
   handler: src/lambdas/photos/uploadMany.handler
@@ -60,6 +53,8 @@ UploadPhotos:
         path: photos
         method: post
         cors: true
+  memorySize: 1000
+  timeout: 10
 
 AddWatermarkAndThumbnailAddToDb:
   handler: src/lambdas/photos/addPhoto.handler

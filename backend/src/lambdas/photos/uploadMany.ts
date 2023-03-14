@@ -6,7 +6,6 @@ import { Roles } from "src/enums/roles";
 import authService from "src/services/authService";
 import { ApiError } from "src/errors/apiError";
 import photosUploader from "src/services/photosUploader";
-import s3Service from "src/services/s3Service";
 
 export const handler = async (
   event: APIGatewayProxyEvent
@@ -27,11 +26,8 @@ export const handler = async (
     const { Authorization: authToken } = event.headers;
     const { albumId, photos } = JSON.parse(event.body);
     await authService.checkAuth(authToken, Roles.PHOTOGRAPHER);
-    for (let i = 0; i < photos.length; i++) {
-      const buf = Buffer.from(photos[i].data, "base64");
-      await s3Service.uploadImage(buf, `test/${photos[i].name}`, "image/jpeg");
-    }
-    return { statusCode: 200, body: JSON.stringify("photo") };
+    await photosUploader.uploadMany(photos, albumId);
+    return { statusCode: 200, body: JSON.stringify("Photos uploaded") };
   } catch (err) {
     if (err instanceof ApiError) {
       return {

@@ -33,10 +33,9 @@ class PhotosService {
       watermarkedThumbnailKey
     );
     const promisesResult = await Promise.all(promisesArray);
-    await s3Service.uploadMany(promisesResult, keys);
+    await s3Service.uploadEditedPhotos(promisesResult, keys);
     const photo: Photo = {
       albumId: albumId,
-      isActivated: false,
       originalPhotoKey: key,
       watermarkedPhotoKey: watermarkedPhotoKey,
       thumbnailKey: thumbnailKey,

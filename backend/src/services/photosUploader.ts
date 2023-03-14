@@ -9,7 +9,13 @@ export class PhotosUploader {
     if (!album) {
       throw ApiError.NotFound("Album");
     }
-
+    const promises = photos.map(async (photo) => {
+      const { data, name, type } = photo;
+      const key = `originalPhotos/${album.title}/${name}`;
+      const buffer = Buffer.from(data, "base64");
+      await s3Service.uploadImage(buffer, key, type);
+    });
+    await Promise.all(promises);
   };
 }
 const photosUploader = new PhotosUploader();

@@ -1,4 +1,4 @@
-import { bigint, varchar } from "drizzle-orm/mysql-core/columns";
+import { bigint, boolean, varchar } from "drizzle-orm/mysql-core/columns";
 import { mysqlTable } from "drizzle-orm/mysql-core/table";
 import { albums } from "./album";
 import { persons } from "./person";
@@ -10,4 +10,5 @@ export const personAlbums = mysqlTable("PersonAlbums", {
   albumId: bigint("AlbumId", { mode: "number" })
     .references(() => albums.id)
     .notNull(),
+  isActivated: boolean("IsActivated").notNull(),
 });
