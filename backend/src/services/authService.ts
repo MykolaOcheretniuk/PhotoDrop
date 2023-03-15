@@ -1,5 +1,5 @@
 import { JwtPayload } from "jsonwebtoken";
-import refreshTokensStorage from "src/db/dynamoDB/dynamoDB";
+import refreshTokensStorage from "src/db/dynamoDB/refreshTokensStorage";
 import personsRepository from "src/db/repositories/personsRepository";
 import photographersRepository from "src/db/repositories/photographersRepository";
 import rolesRepository from "src/db/repositories/rolesRepository";

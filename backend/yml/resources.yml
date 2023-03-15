@@ -41,3 +41,15 @@ Resources:
         - AttributeName: PersonId
           KeyType: HASH
       BillingMode: PAY_PER_REQUEST
+
+  PhoneNumberConfirmationCode:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: PhoneNumberConfirmationCode
+      AttributeDefinitions:
+        - AttributeName: PhoneNumber
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PhoneNumber
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST

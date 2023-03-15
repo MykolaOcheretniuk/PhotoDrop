@@ -23,6 +23,11 @@ provider:
             - s3:PutObject
           Resource:
             - "arn:aws:s3:::photo-drop-images/*"
+        - Effect: Allow
+          Action:
+            - ssm:GetParameter
+          Resource: "*"
+      
   environment:
     PHOTO_DROP_DB_USERNAME: ${ssm:PHOTO_DROP_DB_USERNAME}
     PHOTO_DROP_DB_PASSWORD: ${ssm:PHOTO_DROP_DB_PASSWORD}
@@ -34,6 +39,9 @@ provider:
     BUCKET_NAME: photo-drop-images
     WATERMARK_KEY: ${ssm:WATERMARK_KEY}
     REGION: us-east-1
+    TWILIO_ACCOUNT_SID: ${ssm:TWILIO_ACCOUNT_SID}
+    TWILIO_AUTH_TOKEN: ${ssm:TWILIO_AUTH_TOKEN}
+    TWILIO_PHONE_NUMBERS_PARAM_NAME: TWILIO_PHONE_NUMBERS
 
 functions: ${file(yml/functions.yml)}
 resources: ${file(yml/resources.yml)}
