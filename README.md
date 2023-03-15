@@ -75,6 +75,7 @@
     --header 'Authorization: JWT-AUTH-Token'
 
 ## Upload Photos
+
     https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/photos
 
     -POST Request
@@ -94,3 +95,19 @@
                 "data": "<base64-encoded-image-data>"
             }
         ]
+
+## Get Confirmation Code
+
+    https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/user/getConfirmationCode
+
+     Required JSON Body:
+    {
+        "phoneNumber":"+380999999999"
+    }
+
+    curl --request POST \
+    --url https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/user/getConfirmationCode \
+    --header 'Content-Type: application/json' \
+    --data '{
+        "phoneNumber":"+380999999999"
+    }'
