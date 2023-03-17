@@ -5,8 +5,8 @@ import {
 import { Roles } from "src/enums/roles";
 import authService from "src/services/authService";
 import { ApiError } from "src/errors/apiError";
-import albumsService from "src/services/albumsService";
 import { HEADERS } from "../headers";
+import usersService from "src/services/usersService";
 
 export const handler = async (
   event: APIGatewayProxyEvent
@@ -26,14 +26,29 @@ export const handler = async (
         body: JSON.stringify(`JSON body is missing.`),
       };
     }
+    if (!event.pathParameters) {
+      return {
+        statusCode: 400,
+        headers: HEADERS,
+        body: JSON.stringify(`Path parameters is null.`),
+      };
+    }
     const { Authorization: authToken } = event.headers;
-    const { albumId, clients } = JSON.parse(event.body);
-    await authService.checkAuth(authToken, Roles.PHOTOGRAPHER);
-    await albumsService.addClients(albumId, clients);
+    await authService.checkAuth(authToken, Roles.USER);
+    const body = JSON.parse(event.body);
+    const { id: userId } = event.pathParameters;
+    if (!userId) {
+      return {
+        statusCode: 400,
+        headers: HEADERS,
+        body: JSON.stringify(`Incorrect path parameters.`),
+      };
+    }
+    await usersService.uploadSelfie(body, userId);
     return {
       statusCode: 200,
       headers: HEADERS,
-      body: JSON.stringify("Clients added!"),
+      body: JSON.stringify("Selfie uploaded"),
     };
   } catch (err) {
     if (err instanceof ApiError) {

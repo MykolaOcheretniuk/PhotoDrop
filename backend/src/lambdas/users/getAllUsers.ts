@@ -6,6 +6,7 @@ import { Roles } from "src/enums/roles";
 import { ApiError } from "src/errors/apiError";
 import authService from "src/services/authService";
 import usersService from "src/services/usersService";
+import { HEADERS } from "../headers";
 
 export const handler = async (
   event: APIGatewayProxyEvent
@@ -14,22 +15,25 @@ export const handler = async (
     if (!event.headers.Authorization) {
       return {
         statusCode: 400,
+        headers: HEADERS,
         body: JSON.stringify(`Authorization header is missing.`),
       };
     }
     const { Authorization: authToken } = event.headers;
     await authService.checkAuth(authToken, Roles.PHOTOGRAPHER);
     const users = await usersService.getAll();
-    return { statusCode: 200, body: JSON.stringify(users) };
+    return { statusCode: 200, headers: HEADERS, body: JSON.stringify(users) };
   } catch (err) {
     if (err instanceof ApiError) {
       return {
         statusCode: err.code,
+        headers: HEADERS,
         body: JSON.stringify(`${err}`),
       };
     }
     return {
       statusCode: 400,
+      headers: HEADERS,
       body: JSON.stringify(`Bad request: ${err}`),
     };
   }

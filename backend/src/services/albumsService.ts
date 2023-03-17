@@ -6,7 +6,7 @@ import { ApiError } from "src/errors/apiError";
 import { AlbumInfo } from "src/models/album/album";
 import { AlbumDetails } from "src/models/album/albumDetails";
 import { CreateAlbumModel } from "src/models/album/createAlbumModel";
-import photosService from "./photosService";
+import photosService from "./photoServices/photosService";
 
 class AlbumsService {
   create = async (albumModel: CreateAlbumModel, creatorId: string) => {
@@ -38,6 +38,11 @@ class AlbumsService {
     const { id } = result;
     if (!id) {
       throw AlbumError.IncorrectValue("Id");
+    }
+    const isPersonAssociatedToAlbum =
+      await albumsRepository.isAssociatedWithPerson(personId, albumId);
+    if (!isPersonAssociatedToAlbum) {
+      throw AlbumError.NotBelongs(personId);
     }
     const photos = await photosService.getAlbumPhotos(albumId, personId);
     return Object.assign(result, { id: id, photos: photos });

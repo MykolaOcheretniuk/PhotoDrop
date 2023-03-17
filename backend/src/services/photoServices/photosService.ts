@@ -5,7 +5,7 @@ import { S3Operations } from "src/enums/s3Operations";
 import { ApiError } from "src/errors/apiError";
 import { PhotoModel } from "src/models/photos/photo";
 import photoEditor from "./photoEditor";
-import s3Service from "./s3Service";
+import s3Service from "../awsServices/s3Service";
 
 class PhotosService {
   addNew = async (

@@ -1,7 +1,7 @@
 import albumsRepository from "src/db/repositories/albumsRepository";
 import { ApiError } from "src/errors/apiError";
 import { UploadPhoto } from "src/models/photos/uploadPhoto";
-import s3Service from "./s3Service";
+import s3Service from "../awsServices/s3Service";
 
 export class PhotosUploader {
   uploadMany = async (photos: UploadPhoto[], albumId: number) => {

@@ -11,10 +11,17 @@ class RolesRepository extends BaseRepository<Role> {
         id: roles.id,
         title: roles.title,
       })
-      .from(persons)
-      .leftJoin(roles, eq(roles.id, persons.roleId))
+      .from(roles)
+      .leftJoin(persons, eq(roles.id, persons.roleId))
       .where(eq(persons.id, personId));
     return role[0];
+  };
+  getByTitle = async (roleTitle: string): Promise<Role> => {
+    const result = await this.db
+      .select()
+      .from(roles)
+      .where(eq(roles.title, roleTitle));
+    return result[0];
   };
 }
 const rolesRepository = new RolesRepository(persons);

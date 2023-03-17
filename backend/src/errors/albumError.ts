@@ -5,6 +5,9 @@ export class AlbumError extends ApiError {
     super(message, code);
   }
   static IncorrectValue(field: string) {
-    return new AlbumError(`Incorrect field:${field}`, 500);
+    return new AlbumError(`Incorrect field:${field}`, 400);
+  }
+  static NotBelongs(personId: string) {
+    return new AlbumError(`Album not belongs to person: ${personId} `, 403);
   }
 }

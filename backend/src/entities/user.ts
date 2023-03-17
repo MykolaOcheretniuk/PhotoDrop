@@ -1,7 +1,7 @@
 export interface User {
-  personId: string;
+  personId: string | null;
   email: string | null;
   fullName: string | null;
-  profilePhotoUrl: string | null;
-  phoneNumber: string | null;
+  profilePhotoKey: string | null;
+  phoneNumber: string;
 }

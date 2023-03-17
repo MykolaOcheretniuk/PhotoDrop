@@ -7,6 +7,6 @@ export const users = mysqlTable("Users", {
     .references(() => persons.id)
     .notNull()
     .primaryKey(),
-  profilePhotoURL: varchar("ProfilePhotoURL", { length: 256 }),
-  phoneNumber: varchar("PhoneNumber", { length: 100 }),
+  profilePhotoKey: varchar("ProfilePhotoKey", { length: 256 }),
+  phoneNumber: varchar("PhoneNumber", { length: 100 }).notNull(),
 });

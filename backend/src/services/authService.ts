@@ -1,18 +1,24 @@
 import { JwtPayload } from "jsonwebtoken";
-import refreshTokensStorage from "src/db/dynamoDB/refreshTokensStorage";
+import confirmationCodesStorage from "src/db/dynamoDB/confirmationCodesStorage";
 import personsRepository from "src/db/repositories/personsRepository";
 import photographersRepository from "src/db/repositories/photographersRepository";
 import rolesRepository from "src/db/repositories/rolesRepository";
+import usersRepository from "src/db/repositories/usersRepository";
 import { Roles } from "src/enums/roles";
 import { ApiError } from "src/errors/apiError";
 import { PhotographerError } from "src/errors/photographersError";
-import { TokensError } from "src/errors/tokensError";
 import { TokensResponse } from "src/models/tokensResponse";
+import { LoginAndRegistrationModel } from "src/models/users/loginAndRegistration";
+import codesService from "./codesService";
 import jwtTokensService from "./jwtTokensService";
 import passwordService from "./passwordService";
+import usersService from "./usersService";
 
 class AuthService {
-  signIn = async (password: string, login: string): Promise<TokensResponse> => {
+  signInPhotographer = async (
+    password: string,
+    login: string
+  ): Promise<TokensResponse> => {
     const photographer = await photographersRepository.getByLogin(login);
     if (!photographer) {
       throw ApiError.NotFound("Photographer");
@@ -25,31 +31,10 @@ class AuthService {
     if (!isPasswordCorrect) {
       throw PhotographerError.WrongPassword();
     }
-    const tokens = jwtTokensService.generateTokens(
+    const tokens = jwtTokensService.generateAccessToken(
       personId,
       Roles.PHOTOGRAPHER
     );
-    await refreshTokensStorage.addRefreshToken(personId, tokens.refreshToken);
-    return tokens;
-  };
-  refresh = async (refreshToken: string): Promise<TokensResponse> => {
-    const tokenPayload = jwtTokensService.validateRefreshToken(
-      refreshToken
-    ) as JwtPayload;
-    const { personId } = tokenPayload;
-    const item = await refreshTokensStorage.findRefreshToken(personId);
-    if (!item.Item) {
-      throw TokensError.LegacyRefreshToken();
-    }
-    const { RefreshToken: tokenFromDb } = item["Item"];
-    if (refreshToken != tokenFromDb) {
-      throw TokensError.LegacyRefreshToken();
-    }
-    const tokens = jwtTokensService.generateTokens(
-      personId,
-      Roles.PHOTOGRAPHER
-    );
-    await refreshTokensStorage.addRefreshToken(personId, tokens.refreshToken);
     return tokens;
   };
   checkAuth = async (accessToken: string, role: Roles) => {
@@ -64,8 +49,30 @@ class AuthService {
     const personRole = await rolesRepository.personRole(personId);
     const { title: roleTitle } = personRole;
     if (roleTitle !== role) {
-      throw PhotographerError.IncorrectRole(role as string);
+      throw PhotographerError.IncorrectRole();
     }
+  };
+  loginRegisterUser = async (model: LoginAndRegistrationModel) => {
+    const { phoneNumber, confirmationCode } = model;
+    await codesService.validateCode(phoneNumber, confirmationCode);
+    const user = await usersRepository.getByPhoneNumber(phoneNumber);
+    if (!user) {
+      const createdUser = await usersService.createNew(phoneNumber);
+      const { personId } = createdUser;
+      const jwtToken = jwtTokensService.generateAccessToken(
+        personId,
+        Roles.USER
+      );
+      await confirmationCodesStorage.deleteCode(phoneNumber);
+      return jwtToken;
+    }
+    const { personId } = user;
+    if (!personId) {
+      throw ApiError.IsNull("Person id");
+    }
+    const jwtToken = jwtTokensService.generateAccessToken(personId, Roles.USER);
+    await confirmationCodesStorage.deleteCode(phoneNumber);
+    return jwtToken;
   };
 }
 

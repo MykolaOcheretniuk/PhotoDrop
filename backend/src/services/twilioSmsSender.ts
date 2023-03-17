@@ -1,6 +1,6 @@
 import { ApiError } from "src/errors/apiError";
 import { Twilio } from "twilio";
-import ssmService from "./ssmService";
+import ssmService from "./awsServices/ssmService";
 class TwilioSmsSender {
   private twilioClient: Twilio;
   constructor() {
@@ -9,7 +9,6 @@ class TwilioSmsSender {
       process.env.TWILIO_AUTH_TOKEN as string
     );
   }
-
   sendMessage = async (message: string, clientNumber: string) => {
     const param = await ssmService.getParameter(
       process.env.TWILIO_PHONE_NUMBERS_PARAM_NAME as string

@@ -111,3 +111,63 @@
     --data '{
         "phoneNumber":"+380999999999"
     }'
+
+## Resend Code
+
+    https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/user/resendCode
+
+    Required JSON Body:
+    {
+        "phoneNumber":"+380999999999"
+    }
+
+    curl --request POST \
+
+    --url https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/user/resendCode \
+    --header 'Content-Type: application/json' \
+    --data '{
+    "phoneNumber":"+380999999999"
+    }'
+
+## Login Registration
+
+    https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/user/login
+
+     Required JSON Body:
+    {
+        "confirmationCode":"000000",
+        "phoneNumber":"+380999999999"
+    }
+
+    curl --request POST \
+
+    --url https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/user/login \
+    --header 'Content-Type: application/json' \
+    --data '{
+    "confirmationCode":"480479",
+    "phoneNumber":"+380999999999"
+    }'
+
+## Upload Selfie
+
+    https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/user/{id}/selfie
+
+    Required path parameter: id
+
+    Required JSON body:
+    {
+        "name": "selfie1.jpg",
+        "type": "image/jpeg",
+        "data": "<base64-encoded-image-data>"
+    }
+
+    curl --request POST \
+
+    --url https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/user/{id}/selfie \
+    --header 'Authorization: JWT_AUTH_TOKEN' \
+    --header 'Content-Type: application/json' \
+    --data '{
+        "name": "selfie1.jpg",
+        "type": "image/jpeg",
+        "data": "base64 string"
+    }'

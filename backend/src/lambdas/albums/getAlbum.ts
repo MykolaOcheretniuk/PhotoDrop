@@ -7,6 +7,7 @@ import { ApiError } from "src/errors/apiError";
 import albumsService from "src/services/albumsService";
 import authService from "src/services/authService";
 import jwtTokensService from "src/services/jwtTokensService";
+import { HEADERS } from "../headers";
 
 export const handler = async (
   event: APIGatewayProxyEvent
@@ -15,6 +16,7 @@ export const handler = async (
     if (!event.headers.Authorization) {
       return {
         statusCode: 400,
+        headers: HEADERS,
         body: JSON.stringify(`Authorization header is missing.`),
       };
     }
@@ -22,6 +24,7 @@ export const handler = async (
     if (!event.queryStringParameters) {
       return {
         statusCode: 400,
+        headers: HEADERS,
         body: JSON.stringify(`Query string parameters is missing.`),
       };
     }
@@ -32,16 +35,18 @@ export const handler = async (
     await authService.checkAuth(authToken, personRole);
     const id = event.queryStringParameters["id"] as string;
     const album = await albumsService.getById(+id, personId);
-    return { statusCode: 200, body: JSON.stringify(album) };
+    return { statusCode: 200, headers: HEADERS, body: JSON.stringify(album) };
   } catch (err) {
     if (err instanceof ApiError) {
       return {
         statusCode: err.code,
+        headers: HEADERS,
         body: JSON.stringify(`${err}`),
       };
     }
     return {
       statusCode: 400,
+      headers: HEADERS,
       body: JSON.stringify(`Bad request: ${err}`),
     };
   }

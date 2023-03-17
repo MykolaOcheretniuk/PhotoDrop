@@ -30,18 +30,6 @@ Resources:
             ExposedHeaders:
               - ETag
 
-  PersonIdRefreshToken:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      TableName: PersonIdRefreshToken
-      AttributeDefinitions:
-        - AttributeName: PersonId
-          AttributeType: S
-      KeySchema:
-        - AttributeName: PersonId
-          KeyType: HASH
-      BillingMode: PAY_PER_REQUEST
-
   PhoneNumberConfirmationCode:
     Type: AWS::DynamoDB::Table
     Properties:

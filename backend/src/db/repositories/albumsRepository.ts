@@ -61,6 +61,24 @@ class AlbumsRepository extends BaseRepository<Album> {
     const { isActivated } = result[0];
     return isActivated;
   };
+  isAssociatedWithPerson = async (
+    personId: string,
+    albumId: number
+  ): Promise<boolean> => {
+    const result = await this.db
+      .select()
+      .from(personAlbums)
+      .where(
+        and(
+          eq(personAlbums.personId, personId),
+          eq(personAlbums.albumId, albumId)
+        )
+      );
+    if (result[0]) {
+      return true;
+    }
+    return false;
+  };
 }
 
 const albumsRepository = new AlbumsRepository(albums);

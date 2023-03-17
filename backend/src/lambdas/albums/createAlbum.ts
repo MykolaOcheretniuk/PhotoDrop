@@ -9,6 +9,7 @@ import { CreateAlbumModel } from "src/models/album/createAlbumModel";
 import albumsService from "src/services/albumsService";
 import authService from "src/services/authService";
 import jwtTokensService from "src/services/jwtTokensService";
+import { HEADERS } from "../headers";
 
 export const handler = async (
   event: APIGatewayProxyEvent
@@ -17,12 +18,14 @@ export const handler = async (
     if (!event.headers.Authorization) {
       return {
         statusCode: 400,
+        headers: HEADERS,
         body: JSON.stringify(`Authorization header is missing.`),
       };
     }
     if (!event.body) {
       return {
         statusCode: 400,
+        headers: HEADERS,
         body: JSON.stringify(`JSON body required.`),
       };
     }
@@ -34,16 +37,18 @@ export const handler = async (
     const { personId: creatorId } = tokenPayload;
     const model = JSON.parse(event.body) as CreateAlbumModel;
     const result = await albumsService.create(model, creatorId);
-    return { statusCode: 200, body: JSON.stringify(result) };
+    return { statusCode: 200, headers: HEADERS, body: JSON.stringify(result) };
   } catch (err) {
     if (err instanceof ApiError) {
       return {
         statusCode: err.code,
+        headers: HEADERS,
         body: JSON.stringify(`${err}`),
       };
     }
     return {
       statusCode: 400,
+      headers: HEADERS,
       body: JSON.stringify(`Bad request: ${err}`),
     };
   }

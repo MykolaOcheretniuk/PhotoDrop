@@ -3,36 +3,38 @@ import {
   APIGatewayProxyResult,
 } from "aws-lambda/trigger/api-gateway-proxy";
 import { ApiError } from "src/errors/apiError";
-import twilioSmsSender from "src/services/twilioSmsSender";
-import crypto from "crypto";
-import confirmationCodesStorage from "src/db/dynamoDB/confirmationCodesStorage";
+import codesService from "src/services/codesService";
+import { HEADERS } from "../headers";
+
 export const handler = async (
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
   try {
     if (!event.body) {
       return {
-        statusCode: 404,
+        statusCode: 400,
+        headers: HEADERS,
         body: JSON.stringify(`Event body is missing`),
       };
     }
     const { phoneNumber } = JSON.parse(event.body);
-    const code = crypto.randomInt(100000, 999999).toString();
-    await twilioSmsSender.sendMessage(code, phoneNumber);
-    await confirmationCodesStorage.addCode(phoneNumber, code);
+    await codesService.sendCode(phoneNumber);
     return {
       statusCode: 200,
-      body: JSON.stringify("Code sent."),
+      headers: HEADERS,
+      body: JSON.stringify("Code sent!"),
     };
   } catch (err) {
     if (err instanceof ApiError) {
       return {
         statusCode: err.code,
+        headers: HEADERS,
         body: JSON.stringify(`${err}`),
       };
     }
     return {
       statusCode: 400,
+      headers: HEADERS,
       body: JSON.stringify(`Bad request: ${err}`),
     };
   }

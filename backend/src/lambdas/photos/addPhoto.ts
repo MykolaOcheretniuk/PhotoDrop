@@ -1,7 +1,7 @@
 import { S3Event } from "aws-lambda";
 import { ApiError } from "src/errors/apiError";
 import albumsService from "src/services/albumsService";
-import photosService from "src/services/photosService";
+import photosService from "src/services/photoServices/photosService";
 
 export const handler = async (event: S3Event) => {
   try {

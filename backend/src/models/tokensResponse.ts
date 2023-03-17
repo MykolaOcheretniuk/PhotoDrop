@@ -1,5 +1,3 @@
-export interface TokensResponse
-{
-    accessToken:string,
-    refreshToken:string,
+export interface TokensResponse {
+  accessToken: string;
 }

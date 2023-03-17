@@ -13,14 +13,6 @@ SignIn:
         method: post
         cors: true
 
-Refresh:
-  handler: src/lambdas/photographers/refresh.handler
-  events:
-    - http:
-        path: refresh
-        method: post
-        cors: true
-
 CreateAlbum:
   handler: src/lambdas/albums/createAlbum.handler
   events:
@@ -55,6 +47,14 @@ UploadPhotos:
   memorySize: 1000
   timeout: 10
 
+UploadSelfie:
+  handler: src/lambdas/photos/uploadSelfie.handler
+  events:
+    - http:
+        path: user/{id}/selfie
+        method: post
+        cors: true
+
 AssociateClientsWithAlbum:
   handler: src/lambdas/albums/associateClientsWithAlbum.handler
   events:
@@ -62,7 +62,6 @@ AssociateClientsWithAlbum:
         path: album/addClients
         method: post
         cors: true
-
 
 AddWatermarkAndThumbnailAddToDb:
   handler: src/lambdas/photos/addPhoto.handler
@@ -89,5 +88,21 @@ GetConfirmationCode:
   events:
     - http:
         path: user/getConfirmationCode
+        method: post
+        cors: true
+
+ResendCode:
+  handler: src/lambdas/users/resendCode.handler
+  events:
+    - http:
+        path: user/resendCode
+        method: post
+        cors: true
+
+LoginOrRegistration:
+  handler: src/lambdas/users/loginOrRegister.handler
+  events:
+    - http:
+        path: user/login
         method: post
         cors: true
