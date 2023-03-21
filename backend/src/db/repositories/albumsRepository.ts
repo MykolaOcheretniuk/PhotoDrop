@@ -30,6 +30,7 @@ class AlbumsRepository extends BaseRepository<Album> {
         id: albums.id,
         title: albums.title,
         location: albums.location,
+        createdDate: albums.createdDate,
       })
       .from(albums)
       .leftJoin(personAlbums, eq(personAlbums.albumId, albums.id))

@@ -15,6 +15,7 @@ class AlbumsService {
       title: title,
       location: location,
       dataPicker: dataPicker,
+      createdDate: new Date(),
     };
     const insertResult = await albumsRepository.addNew(newAlbum);
     const { insertId: albumId } = insertResult[0];
