@@ -3,10 +3,11 @@ import {
   APIGatewayProxyResult,
 } from "aws-lambda/trigger/api-gateway-proxy";
 import { JwtPayload } from "jsonwebtoken";
+import { Roles } from "src/enums/roles";
 import { ApiError } from "src/errors/apiError";
-import albumsService from "src/services/albumsService";
 import authService from "src/services/authService";
 import jwtTokensService from "src/services/jwtTokensService";
+import photosService from "src/services/photoServices/photosService";
 import { HEADERS } from "../headers";
 
 export const handler = async (
@@ -21,21 +22,14 @@ export const handler = async (
       };
     }
     const { Authorization: authToken } = event.headers;
-    if (!event.pathParameters) {
-      return {
-        statusCode: 400,
-        headers: HEADERS,
-        body: JSON.stringify(`Path parameters is missing.`),
-      };
-    }
+
     const tokenPayload = (await jwtTokensService.validateAccessToken(
       authToken
     )) as JwtPayload;
-    const { personId, personRole } = tokenPayload;
-    await authService.checkAuth(authToken, personRole);
-    const id = event.pathParameters["id"] as string;
-    const album = await albumsService.getById(+id, personId);
-    return { statusCode: 200, headers: HEADERS, body: JSON.stringify(album) };
+    const { personId } = tokenPayload;
+    await authService.checkAuth(authToken, Roles.USER);
+    const photos = await photosService.getAllPersonPhotos(personId);
+    return { statusCode: 200, headers: HEADERS, body: JSON.stringify(photos) };
   } catch (err) {
     if (err instanceof ApiError) {
       return {

@@ -14,6 +14,13 @@ class PhotosService {
     photoName: string,
     albumId: number
   ) => {
+    const existingPhoto = await photosRepository.getByNameInAlbum(
+      photoName,
+      albumId
+    );
+    if (existingPhoto) {
+      return;
+    }
     const photoBuffer = await s3Service.getImageBuffer(key);
     const watermarkBuffer = await s3Service.getImageBuffer(
       process.env.WATERMARK_KEY as string
@@ -69,7 +76,24 @@ class PhotosService {
       if (!id) {
         throw ApiError.IsNull("Id");
       }
-      return { id: id, thumbnailUrl: accessUrl };
+      return { id: id, url: accessUrl };
+    });
+    return await Promise.all(result);
+  };
+  getAllPersonPhotos = async (personId: string): Promise<PhotoModel[]> => {
+    const photos = await photosRepository.getAllPersonPhotos(personId);
+    const result = photos.map(async (photo) => {
+      const { isActivated, albumTitle, photoName, id } = photo;
+      let baseKey = "thumbnails/";
+      if (!isActivated) {
+        baseKey = "watermarkedThumbnails/";
+      }
+      const key = baseKey + `${albumTitle}/${photoName}`;
+      const accessUrl = await s3Service.createPreSignedUrl(
+        key,
+        S3Operations.GET_OBJECT
+      );
+      return { id: id, url: accessUrl };
     });
     return await Promise.all(result);
   };

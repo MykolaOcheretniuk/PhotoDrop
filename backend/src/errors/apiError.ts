@@ -4,10 +4,13 @@ export class ApiError extends Error {
     super(message);
     this.code = code;
   }
-  static NotFound(entity:string) {
+  static NotFound(entity: string) {
     return new ApiError(`${entity} not found`, 404);
   }
-  static IsNull(entity:string){
-    return new ApiError(`${entity} is null`,400)
+  static IsNull(entity: string) {
+    return new ApiError(`${entity} is null`, 400);
+  }
+  static AlreadyExists(entity: string) {
+    return new ApiError(`${entity} is already exists!`, 400);
   }
 }

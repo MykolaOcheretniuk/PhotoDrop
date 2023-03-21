@@ -1,5 +1,8 @@
-import { eq } from "drizzle-orm/expressions";
+import { eq, and } from "drizzle-orm/expressions";
 import { Photo } from "src/entities/photo";
+import { PhotoDetails } from "src/models/photos/photoDetails";
+import { albums } from "../schema/album";
+import { personAlbums } from "../schema/personAlbum";
 import { photos } from "../schema/photo";
 import { BaseRepository } from "./baseRepository";
 
@@ -9,6 +12,32 @@ class PhotosRepository extends BaseRepository<Photo> {
       .select()
       .from(photos)
       .where(eq(photos.albumId, albumId));
+    return result;
+  };
+  getByNameInAlbum = async (name: string, albumId: number): Promise<Photo> => {
+    const result = await this.db
+      .select()
+      .from(photos)
+      .where(and(eq(photos.photoName, name), eq(photos.albumId, albumId)));
+    return result[0];
+  };
+  getById = async (id: number): Promise<Photo> => {
+    const result = await this.db.select().from(photos).where(eq(photos.id, id));
+    return result[0];
+  };
+  getAllPersonPhotos = async (personId: string): Promise<PhotoDetails[]> => {
+    const result = await this.db
+      .select({
+        id: photos.id,
+        albumId: photos.albumId,
+        albumTitle: photos.albumTitle,
+        photoName: photos.photoName,
+        isActivated: personAlbums.isActivated
+      })
+      .from(photos)
+      .leftJoin(albums, eq(albums.id, photos.albumId))
+      .leftJoin(personAlbums, eq(personAlbums.albumId, albums.id))
+      .where(eq(personAlbums.personId, personId));
     return result;
   };
 }

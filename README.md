@@ -37,7 +37,7 @@
 
 ## Create Album
 
-    https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/album
+    https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/albums
 
     Required JSON Body:
     {
@@ -58,15 +58,15 @@
 
 ## Get Album By Id
 
-    https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/album?id=2
+    https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/albums/{id}
 
-    Required Query Param : id
+    Path Param : id
 
     curl --request GET \
     --url 'https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/album?id=2' \
     --header 'Authorization: JWT-AUTH-TOKEN'
 
-## Get All Photographer Albums
+## Get All Albums
 
     https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/albums
 
@@ -171,3 +171,13 @@
         "type": "image/jpeg",
         "data": "base64 string"
     }'
+
+
+## Get All User Photos
+
+    https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/photos
+
+
+    curl --request GET \
+  --url https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/photos \
+  --header 'Authorization: JWT_AUTH_TOKEN'
