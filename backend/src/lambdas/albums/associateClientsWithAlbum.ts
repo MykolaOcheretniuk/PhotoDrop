@@ -4,49 +4,25 @@ import {
 } from "aws-lambda/trigger/api-gateway-proxy";
 import { Roles } from "src/enums/roles";
 import authService from "src/services/authService";
-import { ApiError } from "src/errors/apiError";
 import albumsService from "src/services/albumsService";
-import { HEADERS } from "../headers";
+import responseCreator from "src/services/utils/responseCreator";
 
 export const handler = async (
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
   try {
     if (!event.headers.Authorization) {
-      return {
-        statusCode: 400,
-        headers: HEADERS,
-        body: JSON.stringify(`Authorization header is missing.`),
-      };
+      return responseCreator.missedAuthHeader();
     }
     if (!event.body) {
-      return {
-        statusCode: 400,
-        headers: HEADERS,
-        body: JSON.stringify(`JSON body is missing.`),
-      };
+      return responseCreator.missedEventBody();
     }
     const { Authorization: authToken } = event.headers;
     const { albumId, clients } = JSON.parse(event.body);
     await authService.checkAuth(authToken, Roles.PHOTOGRAPHER);
     await albumsService.addClients(albumId, clients);
-    return {
-      statusCode: 200,
-      headers: HEADERS,
-      body: JSON.stringify("Clients added!"),
-    };
+    return responseCreator.default("Clients added", 200);
   } catch (err) {
-    if (err instanceof ApiError) {
-      return {
-        statusCode: err.code,
-        headers: HEADERS,
-        body: JSON.stringify(`${err}`),
-      };
-    }
-    return {
-      statusCode: 400,
-      headers: HEADERS,
-      body: JSON.stringify(`Bad request: ${err}`),
-    };
+    return responseCreator.error(err);
   }
 };

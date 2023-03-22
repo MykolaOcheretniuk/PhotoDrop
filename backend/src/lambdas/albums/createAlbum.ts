@@ -4,30 +4,21 @@ import {
 } from "aws-lambda/trigger/api-gateway-proxy";
 import { JwtPayload } from "jsonwebtoken";
 import { Roles } from "src/enums/roles";
-import { ApiError } from "src/errors/apiError";
 import { CreateAlbumModel } from "src/models/album/createAlbumModel";
 import albumsService from "src/services/albumsService";
 import authService from "src/services/authService";
 import jwtTokensService from "src/services/jwtTokensService";
-import { HEADERS } from "../headers";
+import responseCreator from "src/services/utils/responseCreator";
 
 export const handler = async (
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
   try {
     if (!event.headers.Authorization) {
-      return {
-        statusCode: 400,
-        headers: HEADERS,
-        body: JSON.stringify(`Authorization header is missing.`),
-      };
+      return responseCreator.missedAuthHeader();
     }
     if (!event.body) {
-      return {
-        statusCode: 400,
-        headers: HEADERS,
-        body: JSON.stringify(`JSON body required.`),
-      };
+      return responseCreator.missedEventBody();
     }
     const { Authorization: authToken } = event.headers;
     await authService.checkAuth(authToken, Roles.PHOTOGRAPHER);
@@ -37,19 +28,8 @@ export const handler = async (
     const { personId: creatorId } = tokenPayload;
     const model = JSON.parse(event.body) as CreateAlbumModel;
     const result = await albumsService.create(model, creatorId);
-    return { statusCode: 200, headers: HEADERS, body: JSON.stringify(result) };
+    return responseCreator.default(JSON.stringify(result), 200);
   } catch (err) {
-    if (err instanceof ApiError) {
-      return {
-        statusCode: err.code,
-        headers: HEADERS,
-        body: JSON.stringify(`${err}`),
-      };
-    }
-    return {
-      statusCode: 400,
-      headers: HEADERS,
-      body: JSON.stringify(`Bad request: ${err}`),
-    };
+    return responseCreator.error(err);
   }
 };

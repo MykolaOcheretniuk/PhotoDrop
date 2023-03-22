@@ -1,7 +1,7 @@
 import { S3Event } from "aws-lambda";
-import { ApiError } from "src/errors/apiError";
 import albumsService from "src/services/albumsService";
 import photosService from "src/services/photoServices/photosService";
+import responseCreator from "src/services/utils/responseCreator";
 
 export const handler = async (event: S3Event) => {
   try {
@@ -23,15 +23,6 @@ export const handler = async (event: S3Event) => {
     );
     return { statusCode: 200, body: JSON.stringify(result) };
   } catch (err) {
-    if (err instanceof ApiError) {
-      return {
-        statusCode: err.code,
-        body: JSON.stringify(`${err}`),
-      };
-    }
-    return {
-      statusCode: 400,
-      body: JSON.stringify(`Bad request: ${err}`),
-    };
+    return responseCreator.error(err);
   }
 };
