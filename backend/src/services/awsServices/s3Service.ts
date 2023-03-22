@@ -2,10 +2,11 @@ import * as AWS from "aws-sdk";
 import { S3Operations } from "src/enums/s3Operations";
 import { ApiError } from "src/errors/apiError";
 import { EditedPhotoDto } from "src/models/dto/editedPhotoDto";
+import getEnv from "../utils/getEnv";
 
 class S3Service {
   private s3 = new AWS.S3();
-  private bucket = process.env.BUCKET_NAME as string;
+  private bucket = getEnv("BUCKET_NAME") as string;
   createPreSignedUrl = async (key: string, operation: S3Operations) => {
     const params = {
       Bucket: this.bucket,

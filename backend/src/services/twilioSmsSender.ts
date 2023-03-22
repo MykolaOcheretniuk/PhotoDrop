@@ -1,17 +1,18 @@
 import { ApiError } from "src/errors/apiError";
 import { Twilio } from "twilio";
 import ssmService from "./awsServices/ssmService";
+import getEnv from "./utils/getEnv";
 class TwilioSmsSender {
   private twilioClient: Twilio;
   constructor() {
     this.twilioClient = new Twilio(
-      process.env.TWILIO_ACCOUNT_SID as string,
-      process.env.TWILIO_AUTH_TOKEN as string
+      getEnv("TWILIO_ACCOUNT_SID") as string,
+      getEnv("TWILIO_AUTH_TOKEN") as string
     );
   }
   sendMessage = async (message: string, clientNumber: string) => {
     const { Parameter } = await ssmService.getParameter(
-      process.env.TWILIO_PHONE_NUMBERS_PARAM_NAME as string
+      getEnv("TWILIO_PHONE_NUMBERS_PARAM_NAME") as string
     );
     if (!Parameter) {
       throw ApiError.NotFound(`Parameter TWILIO_PHONE_NUMBERS`);

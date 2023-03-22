@@ -6,6 +6,7 @@ import { ApiError } from "src/errors/apiError";
 import { PhotoModel } from "src/models/photos/photo";
 import photoEditor from "./photoEditor";
 import s3Service from "../awsServices/s3Service";
+import getEnv from "../utils/getEnv";
 
 class PhotosService {
   addNew = async (
@@ -23,7 +24,7 @@ class PhotosService {
     }
     const photoBuffer = await s3Service.getImageBuffer(key);
     const watermarkBuffer = await s3Service.getImageBuffer(
-      process.env.WATERMARK_KEY as string
+      getEnv("WATERMARK_KEY") as string
     );
     await photoEditor.setWatermark(watermarkBuffer);
     const thumbnailPromise = photoEditor.createThumbnail(photoBuffer);
