@@ -5,7 +5,7 @@ import {
 import { JwtPayload } from "jsonwebtoken";
 import albumsService from "src/services/albumsService";
 import authService from "src/services/authService";
-import jwtTokensService from "src/services/jwtTokensService";
+import jwtTokensService from "src/services/utils/jwtTokensService";
 import responseCreator from "src/services/utils/responseCreator";
 
 export const handler = async (

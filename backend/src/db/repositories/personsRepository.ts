@@ -1,6 +1,5 @@
 import { eq } from "drizzle-orm/expressions";
-import { Person } from "src/entities/person";
-import { persons } from "../schema/person";
+import { Person, persons } from "../schema/person";
 import { BaseRepository } from "./baseRepository";
 
 class PersonsRepository extends BaseRepository<Person> {

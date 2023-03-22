@@ -1,12 +1,11 @@
 import { eq, and } from "drizzle-orm/expressions";
-import { Photo } from "src/entities/photo";
 import { PhotoDetails } from "src/models/photos/photoDetails";
 import { albums } from "../schema/album";
 import { personAlbums } from "../schema/personAlbum";
-import { photos } from "../schema/photo";
+import { CreatePhoto, Photo, photos } from "../schema/photo";
 import { BaseRepository } from "./baseRepository";
 
-class PhotosRepository extends BaseRepository<Photo> {
+class PhotosRepository extends BaseRepository<Photo | CreatePhoto> {
   getAlbumPhotos = async (albumId: number): Promise<Photo[]> => {
     const result = await this.db
       .select()
@@ -32,7 +31,7 @@ class PhotosRepository extends BaseRepository<Photo> {
         albumId: photos.albumId,
         albumTitle: photos.albumTitle,
         photoName: photos.photoName,
-        isActivated: personAlbums.isActivated
+        isActivated: personAlbums.isActivated,
       })
       .from(photos)
       .leftJoin(albums, eq(albums.id, photos.albumId))

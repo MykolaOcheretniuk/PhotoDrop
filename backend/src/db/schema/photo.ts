@@ -1,5 +1,5 @@
 import { bigint, serial, varchar } from "drizzle-orm/mysql-core/columns";
-import { mysqlTable } from "drizzle-orm/mysql-core/table";
+import { InferModel, mysqlTable } from "drizzle-orm/mysql-core/table";
 import { albums } from "./album";
 
 export const photos = mysqlTable("Photos", {
@@ -12,3 +12,6 @@ export const photos = mysqlTable("Photos", {
     length: 256,
   }).notNull(),
 });
+
+export type Photo = InferModel<typeof photos, "select">;
+export type CreatePhoto = InferModel<typeof photos, "insert">;

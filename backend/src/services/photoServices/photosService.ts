@@ -1,12 +1,12 @@
 import albumsRepository from "src/db/repositories/albumsRepository";
 import photosRepository from "src/db/repositories/photosRepository";
-import { Photo } from "src/entities/photo";
 import { S3Operations } from "src/enums/s3Operations";
 import { ApiError } from "src/errors/apiError";
 import { PhotoModel } from "src/models/photos/photo";
 import photoEditor from "./photoEditor";
 import s3Service from "../awsServices/s3Service";
 import getEnv from "../utils/getEnv";
+import { CreatePhoto } from "src/db/schema/photo";
 
 class PhotosService {
   addNew = async (
@@ -46,7 +46,7 @@ class PhotosService {
     );
     const promisesResult = await Promise.all(promisesArray);
     await s3Service.uploadEditedPhotos(promisesResult, keys);
-    const photo: Photo = {
+    const photo: CreatePhoto = {
       albumId: albumId,
       albumTitle: albumTitle,
       photoName: photoName,

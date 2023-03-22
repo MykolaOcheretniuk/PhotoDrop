@@ -1,6 +1,6 @@
 import * as jwt from "jsonwebtoken";
 import { TokensResponse } from "src/models/tokensResponse";
-import getEnv from "./utils/getEnv";
+import getEnv from "./getEnv";
 
 class JwtTokensService {
   generateAccessToken = (personId: string, role: string): TokensResponse => {

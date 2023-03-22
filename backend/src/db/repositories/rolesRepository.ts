@@ -1,7 +1,6 @@
 import { eq } from "drizzle-orm/expressions";
-import { Role } from "src/entities/role";
 import { persons } from "../schema/person";
-import { roles } from "../schema/role";
+import { Role, roles } from "../schema/role";
 import { BaseRepository } from "./baseRepository";
 
 class RolesRepository extends BaseRepository<Role> {

@@ -30,7 +30,7 @@
     }
 
     curl --request POST \
-    --url https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/album \
+    --url https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/albums \
     --header 'Authorization: JWT-AUTH-TOKEN' \
     --header 'Content-Type: application/json' \
     --data '{

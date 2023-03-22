@@ -1,6 +1,5 @@
-import { Photographer } from "src/entities/photographer";
 import { persons } from "../schema/person";
-import { photographers } from "../schema/photographer";
+import { Photographer, photographers } from "../schema/photographer";
 import { BaseRepository } from "./baseRepository";
 import { eq } from "drizzle-orm/expressions";
 

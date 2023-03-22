@@ -1,7 +1,6 @@
 import { eq } from "drizzle-orm/expressions";
-import { User } from "src/entities/user";
 import { persons } from "../schema/person";
-import { users } from "../schema/user";
+import { User, users } from "../schema/user";
 import { BaseRepository } from "./baseRepository";
 import { CreateUserDto } from "src/models/dto/createUserDto";
 class UsersRepository extends BaseRepository<User | CreateUserDto> {
@@ -15,7 +14,7 @@ class UsersRepository extends BaseRepository<User | CreateUserDto> {
         phoneNumber: users.phoneNumber,
       })
       .from(users)
-      .leftJoin(persons, eq(persons.id, users.personId))
+      .innerJoin(persons, eq(persons.id, users.personId))
       .where(eq(persons.roleId, 1));
     return result;
   };
@@ -29,7 +28,7 @@ class UsersRepository extends BaseRepository<User | CreateUserDto> {
         phoneNumber: users.phoneNumber,
       })
       .from(users)
-      .leftJoin(persons, eq(persons.id, users.personId))
+      .innerJoin(persons, eq(persons.id, users.personId))
       .where(eq(users.phoneNumber, phoneNumber));
     return result[0];
   };
@@ -43,7 +42,7 @@ class UsersRepository extends BaseRepository<User | CreateUserDto> {
         phoneNumber: users.phoneNumber,
       })
       .from(users)
-      .leftJoin(persons, eq(persons.id, users.personId))
+      .innerJoin(persons, eq(persons.id, users.personId))
       .where(eq(users.personId, personId));
     return result[0];
   };

@@ -7,7 +7,7 @@ import { Roles } from "src/enums/roles";
 import { CreateAlbumModel } from "src/models/album/createAlbumModel";
 import albumsService from "src/services/albumsService";
 import authService from "src/services/authService";
-import jwtTokensService from "src/services/jwtTokensService";
+import jwtTokensService from "src/services/utils/jwtTokensService";
 import responseCreator from "src/services/utils/responseCreator";
 
 export const handler = async (

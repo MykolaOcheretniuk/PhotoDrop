@@ -1,11 +1,10 @@
 import { and, eq } from "drizzle-orm/expressions";
-import { Album } from "src/entities/album";
 import { AlbumInfo } from "src/models/album/album";
-import { albums } from "../schema/album";
+import { Album, albums, CreateAlbum } from "../schema/album";
 import { personAlbums } from "../schema/personAlbum";
 import { BaseRepository } from "./baseRepository";
 
-class AlbumsRepository extends BaseRepository<Album> {
+class AlbumsRepository extends BaseRepository<Album | CreateAlbum> {
   getById = async (albumId: number): Promise<Album> => {
     const album = await this.db
       .select()

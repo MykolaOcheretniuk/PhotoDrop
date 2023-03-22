@@ -5,7 +5,7 @@ import {
 import { JwtPayload } from "jsonwebtoken";
 import { Roles } from "src/enums/roles";
 import authService from "src/services/authService";
-import jwtTokensService from "src/services/jwtTokensService";
+import jwtTokensService from "src/services/utils/jwtTokensService";
 import photosService from "src/services/photoServices/photosService";
 import responseCreator from "src/services/utils/responseCreator";
 

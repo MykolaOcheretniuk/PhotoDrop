@@ -10,8 +10,8 @@ import { PhotographerError } from "src/errors/photographersError";
 import { TokensResponse } from "src/models/tokensResponse";
 import { LoginAndRegistrationModel } from "src/models/users/loginAndRegistration";
 import codesService from "./codesService";
-import jwtTokensService from "./jwtTokensService";
-import passwordService from "./passwordService";
+import jwtTokensService from "./utils/jwtTokensService";
+import passwordService from "./utils/passwordService";
 import usersService from "./usersService";
 
 class AuthService {

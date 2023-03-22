@@ -10,3 +10,11 @@ export const users = mysqlTable("Users", {
   profilePhotoKey: varchar("ProfilePhotoKey", { length: 256 }),
   phoneNumber: varchar("PhoneNumber", { length: 100 }).notNull(),
 });
+
+export interface User {
+  personId: string;
+  email: string | null;
+  fullName: string | null;
+  profilePhotoKey: string | null;
+  phoneNumber: string;
+}

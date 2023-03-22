@@ -10,3 +10,11 @@ export const photographers = mysqlTable("Photographers", {
   login: varchar("Login", { length: 256 }).notNull(),
   passwordHash: varchar("PasswordHash", { length: 256 }).notNull(),
 });
+
+export interface Photographer {
+  personId: string;
+  login: string;
+  passwordHash: string;
+  email: string | null;
+  fullName: string | null;
+}

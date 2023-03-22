@@ -1,6 +1,6 @@
 import albumsRepository from "src/db/repositories/albumsRepository";
 import personsRepository from "src/db/repositories/personsRepository";
-import { Album } from "src/entities/album";
+import { CreateAlbum } from "src/db/schema/album";
 import { AlbumError } from "src/errors/albumError";
 import { ApiError } from "src/errors/apiError";
 import { AlbumInfo } from "src/models/album/album";
@@ -11,7 +11,7 @@ import photosService from "./photoServices/photosService";
 class AlbumsService {
   create = async (albumModel: CreateAlbumModel, creatorId: string) => {
     const { title, location, dataPicker } = albumModel;
-    const newAlbum: Album = {
+    const newAlbum: CreateAlbum = {
       title: title,
       location: location,
       dataPicker: dataPicker,

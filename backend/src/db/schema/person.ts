@@ -1,5 +1,5 @@
 import { bigint, varchar } from "drizzle-orm/mysql-core/columns";
-import { mysqlTable } from "drizzle-orm/mysql-core/table";
+import { InferModel, mysqlTable } from "drizzle-orm/mysql-core/table";
 import { roles } from "./role";
 
 export const persons = mysqlTable("Persons", {
@@ -10,3 +10,4 @@ export const persons = mysqlTable("Persons", {
     .references(() => roles.id)
     .notNull(),
 });
+export type Person = InferModel<typeof persons,"select">
