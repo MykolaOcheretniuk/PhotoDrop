@@ -21,19 +21,11 @@ CreateAlbum:
         method: post
         cors: true
 
-GetAlbum:
-  handler: src/lambdas/albums/getAlbum.handler
+GetAlbums:
+  handler: src/lambdas/albums/get.handler
   events:
     - http:
         path: albums/{id}
-        method: get
-        cors: true
-
-GetAllAlbums:
-  handler: src/lambdas/albums/getAllAlbums.handler
-  events:
-    - http:
-        path: albums
         method: get
         cors: true
 

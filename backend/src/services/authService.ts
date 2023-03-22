@@ -38,16 +38,14 @@ class AuthService {
     return tokens;
   };
   checkAuth = async (accessToken: string, role: Roles) => {
-    const accessTokenPayload = (await jwtTokensService.validateAccessToken(
+    const { personId } = (await jwtTokensService.validateAccessToken(
       accessToken
     )) as JwtPayload;
-    const { personId } = accessTokenPayload;
     const person = await personsRepository.getById(personId);
     if (!person) {
       throw ApiError.NotFound("Person");
     }
-    const personRole = await rolesRepository.personRole(personId);
-    const { title: roleTitle } = personRole;
+    const { title: roleTitle } = await rolesRepository.personRole(personId);
     if (roleTitle !== role) {
       throw PhotographerError.IncorrectRole();
     }
@@ -57,8 +55,7 @@ class AuthService {
     await codesService.validateCode(phoneNumber, confirmationCode);
     const user = await usersRepository.getByPhoneNumber(phoneNumber);
     if (!user) {
-      const createdUser = await usersService.createNew(phoneNumber);
-      const { personId } = createdUser;
+      const { personId } = await usersService.createNew(phoneNumber);
       const jwtToken = jwtTokensService.generateAccessToken(
         personId,
         Roles.USER

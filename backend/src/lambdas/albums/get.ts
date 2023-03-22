@@ -21,21 +21,25 @@ export const handler = async (
       };
     }
     const { Authorization: authToken } = event.headers;
-    if (!event.pathParameters) {
-      return {
-        statusCode: 400,
-        headers: HEADERS,
-        body: JSON.stringify(`Path parameters is missing.`),
-      };
-    }
     const tokenPayload = (await jwtTokensService.validateAccessToken(
       authToken
     )) as JwtPayload;
     const { personId, personRole } = tokenPayload;
     await authService.checkAuth(authToken, personRole);
-    const id = event.pathParameters["id"] as string;
-    const album = await albumsService.getById(+id, personId);
-    return { statusCode: 200, headers: HEADERS, body: JSON.stringify(album) };
+    if (event.pathParameters) {
+      const id = event.pathParameters["id"] as string;
+      if (!Number.isInteger(+id)) {
+        return {
+          statusCode: 400,
+          headers: HEADERS,
+          body: JSON.stringify("Id must be an integer"),
+        };
+      }
+      const album = await albumsService.getById(+id, personId);
+      return { statusCode: 200, headers: HEADERS, body: JSON.stringify(album) };
+    }
+    const albums = await albumsService.getAll(personId);
+    return { statusCode: 200, headers: HEADERS, body: JSON.stringify(albums) };
   } catch (err) {
     if (err instanceof ApiError) {
       return {

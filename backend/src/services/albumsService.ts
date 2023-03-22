@@ -57,7 +57,9 @@ class AlbumsService {
     if (!id) {
       throw AlbumError.IncorrectValue("Id");
     }
-    return Object.assign(album, { id: id });
+    return Object.assign(album, {
+      id: id,
+    });
   };
   addClients = async (albumId: number, clientIds: string[]) => {
     const album = await albumsRepository.getById(albumId);

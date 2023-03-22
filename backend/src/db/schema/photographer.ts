@@ -7,6 +7,6 @@ export const photographers = mysqlTable("Photographers", {
     .references(() => persons.id)
     .notNull()
     .primaryKey(),
-  login: varchar("Login", { length: 256 }),
+  login: varchar("Login", { length: 256 }).notNull(),
   passwordHash: varchar("PasswordHash", { length: 256 }).notNull(),
 });

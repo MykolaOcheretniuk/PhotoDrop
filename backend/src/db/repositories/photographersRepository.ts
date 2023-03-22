@@ -14,8 +14,8 @@ class PhotographersRepository extends BaseRepository<Photographer> {
         fullName: persons.fullName,
         passwordHash: photographers.passwordHash,
       })
-      .from(this.table)
-      .leftJoin(persons, eq(persons.id, photographers.personId))
+      .from(photographers)
+      .innerJoin(persons, eq(persons.id, photographers.personId))
       .where(eq(photographers.login, login));
     return photographer[0];
   };

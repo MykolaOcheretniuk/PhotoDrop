@@ -10,10 +10,9 @@ class TwilioSmsSender {
     );
   }
   sendMessage = async (message: string, clientNumber: string) => {
-    const param = await ssmService.getParameter(
+    const { Parameter } = await ssmService.getParameter(
       process.env.TWILIO_PHONE_NUMBERS_PARAM_NAME as string
     );
-    const { Parameter } = param;
     if (!Parameter) {
       throw ApiError.NotFound(`Parameter TWILIO_PHONE_NUMBERS`);
     }

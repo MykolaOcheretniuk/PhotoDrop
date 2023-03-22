@@ -18,23 +18,6 @@
     "password":"Passw0rd!!!"
     }'
 
-## Refresh Token for for photographers
-
-    https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/refresh
-
-    Required JSON Body:
-    {
-        "refreshToken":"JWT-REFRESH-TOKEN"
-    }
-
-    curl --request POST \
-    --url https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/refresh \
-    --header 'Authorization: JWT-AUTH-TOKEN' \
-    --header 'Content-Type: application/json' \
-    --data '{
-    "refreshToken":"JWT-REFRESH-TOKEN"
-    }'
-
 ## Create Album
 
     https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/albums

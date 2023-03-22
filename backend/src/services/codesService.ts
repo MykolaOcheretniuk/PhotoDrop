@@ -12,10 +12,8 @@ class CodesService {
   };
   resendCode = async (phoneNumber: string) => {
     const code = crypto.randomInt(100000, 999999).toString();
-    const response = await confirmationCodesStorage.findExistingCode(
-      phoneNumber
-    );
-    const { Item: existingCode } = response;
+    const { Item: existingCode } =
+      await confirmationCodesStorage.findExistingCode(phoneNumber);
     if (!existingCode) {
       throw ApiError.NotFound("Confirmation Code");
     }
@@ -27,10 +25,8 @@ class CodesService {
     await confirmationCodesStorage.resendUpdate(phoneNumber, code);
   };
   validateCode = async (phoneNumber: string, code: string) => {
-    const response = await confirmationCodesStorage.findExistingCode(
-      phoneNumber
-    );
-    const { Item: codeFromDb } = response;
+    const { Item: codeFromDb } =
+      await confirmationCodesStorage.findExistingCode(phoneNumber);
     if (!codeFromDb) {
       throw ApiError.NotFound("Confirmation Code");
     }
