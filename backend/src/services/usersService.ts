@@ -12,7 +12,7 @@ class UsersService {
   getAll = async (): Promise<User[]> => {
     const users = await usersRepository.getAll();
     const userModels = users.map(async (user) => {
-      const { fullName, email, phoneNumber } = user;
+      const { phoneNumber } = user;
       if (!phoneNumber) {
         throw ApiError.IsNull(`User phone number.`);
       }
@@ -27,9 +27,6 @@ class UsersService {
       }
       return Object.assign(
         {
-          fullName: fullName,
-          email: email,
-          phoneNumber: phoneNumber,
           profilePhotoUrl: profilePhotoUrl,
         },
         user
@@ -91,7 +88,7 @@ class UsersService {
     await usersRepository.update(newUser);
     await s3Service.uploadImage(buffer, key, type);
   };
-  updateEmail = async (email:string) => {};
+  updateEmail = async (email: string) => {};
 }
 
 const usersService = new UsersService();

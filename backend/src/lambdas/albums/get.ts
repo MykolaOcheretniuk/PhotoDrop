@@ -21,8 +21,8 @@ export const handler = async (
     )) as JwtPayload;
     const { personId, personRole } = tokenPayload;
     await authService.checkAuth(authToken, personRole);
-    if (event.pathParameters) {
-      const id = event.pathParameters["id"] as string;
+    if (event.queryStringParameters) {
+      const id = event.queryStringParameters["id"] as string;
       const album = await albumsService.getById(id, personId);
       return responseCreator.default(JSON.stringify(album), 200);
     }

@@ -41,9 +41,9 @@
 
 ## Get Album By Id
 
-    https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/albums/{id}
+    https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/albums?id=UUID
 
-    Path Param : id
+    Required Query Param : id
 
     curl --request GET \
     --url 'https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/album?id=2' \

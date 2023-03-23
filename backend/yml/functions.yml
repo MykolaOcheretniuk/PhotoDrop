@@ -25,7 +25,7 @@ GetAlbums:
   handler: src/lambdas/albums/get.handler
   events:
     - http:
-        path: albums/{id}
+        path: albums
         method: get
         cors: true
 
