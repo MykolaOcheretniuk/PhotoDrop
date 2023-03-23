@@ -21,7 +21,7 @@ export const handler = async (
     const { albumId, photos } = JSON.parse(event.body);
     await authService.checkAuth(authToken, Roles.PHOTOGRAPHER);
     await photosUploader.uploadMany(photos, albumId);
-    return responseCreator.default("Photos uploaded", 200);
+    return responseCreator.default(JSON.stringify("Photos uploaded"), 200);
   } catch (err) {
     return responseCreator.error(err);
   }

@@ -1,10 +1,10 @@
-import { bigint, serial, varchar } from "drizzle-orm/mysql-core/columns";
+import {  serial, varchar } from "drizzle-orm/mysql-core/columns";
 import { InferModel, mysqlTable } from "drizzle-orm/mysql-core/table";
 import { albums } from "./album";
 
 export const photos = mysqlTable("Photos", {
   id: serial("Id").primaryKey().notNull(),
-  albumId: bigint("AlbumId", { mode: "number" })
+  albumId: varchar("AlbumId", { length: 70 })
     .references(() => albums.id)
     .notNull(),
   albumTitle: varchar("AlbumTitle", { length: 256 }).notNull(),
@@ -14,4 +14,4 @@ export const photos = mysqlTable("Photos", {
 });
 
 export type Photo = InferModel<typeof photos, "select">;
-export type CreatePhoto = InferModel<typeof photos, "insert">;
+export type InsertPhoto = InferModel<typeof photos, "insert">;

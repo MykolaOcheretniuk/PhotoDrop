@@ -114,7 +114,7 @@
 
 ## Login Registration
 
-    https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/user/login
+    https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/users
 
      Required JSON Body:
     {
@@ -133,9 +133,7 @@
 
 ## Upload Selfie
 
-    https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/user/{id}/selfie
-
-    Required path parameter: id
+    https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/user/selfie
 
     Required JSON body:
     {
@@ -155,12 +153,12 @@
         "data": "base64 string"
     }'
 
-
 ## Get All User Photos
 
     https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/photos
 
 
     curl --request GET \
-  --url https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/photos \
-  --header 'Authorization: JWT_AUTH_TOKEN'
+
+--url https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/photos \
+ --header 'Authorization: JWT_AUTH_TOKEN'

@@ -1,9 +1,8 @@
 import { eq } from "drizzle-orm/expressions";
 import { persons } from "../schema/person";
-import { User, users } from "../schema/user";
+import { InsertUser, User, users } from "../schema/user";
 import { BaseRepository } from "./baseRepository";
-import { CreateUserDto } from "src/models/dto/createUserDto";
-class UsersRepository extends BaseRepository<User | CreateUserDto> {
+class UsersRepository extends BaseRepository<User | InsertUser> {
   getAll = async (): Promise<User[]> => {
     const result = await this.db
       .select({
@@ -46,7 +45,7 @@ class UsersRepository extends BaseRepository<User | CreateUserDto> {
       .where(eq(users.personId, personId));
     return result[0];
   };
-  update = async (newUser: CreateUserDto) => {
+  update = async (newUser: InsertUser) => {
     const { personId } = newUser;
     await this.db
       .update(users)

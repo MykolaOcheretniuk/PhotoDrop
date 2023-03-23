@@ -2,15 +2,14 @@ import { randomUUID } from "crypto";
 import personsRepository from "src/db/repositories/personsRepository";
 import rolesRepository from "src/db/repositories/rolesRepository";
 import usersRepository from "src/db/repositories/usersRepository";
+import { InsertUser, User } from "src/db/schema/user";
 import { S3Operations } from "src/enums/s3Operations";
 import { ApiError } from "src/errors/apiError";
-import { CreateUserDto } from "src/models/dto/createUserDto";
-import { UploadPhoto } from "src/models/photos/uploadPhoto";
-import { UserModel } from "src/models/users/userModel";
+import { UploadPhoto } from "src/models/photos";
 import s3Service from "./awsServices/s3Service";
 
 class UsersService {
-  getAll = async (): Promise<UserModel[]> => {
+  getAll = async (): Promise<User[]> => {
     const users = await usersRepository.getAll();
     const userModels = users.map(async (user) => {
       const { fullName, email, phoneNumber } = user;
@@ -38,7 +37,7 @@ class UsersService {
     });
     return await Promise.all(userModels);
   };
-  getByPhoneNumber = async (phoneNumber: string): Promise<UserModel> => {
+  getByPhoneNumber = async (phoneNumber: string): Promise<User> => {
     const user = await usersRepository.getByPhoneNumber(phoneNumber);
     const { fullName, email, phoneNumber: userPhoneNumber } = user;
     if (!userPhoneNumber) {
@@ -54,7 +53,7 @@ class UsersService {
       user
     );
   };
-  createNew = async (phoneNumber: string): Promise<CreateUserDto> => {
+  createNew = async (phoneNumber: string): Promise<InsertUser> => {
     const role = await rolesRepository.getByTitle("User");
     const personId = randomUUID();
     const person = {
@@ -83,7 +82,7 @@ class UsersService {
     }
     const { name, type, data } = photo;
     const key = `selfies/${userId}/${name}`;
-    const newUser: CreateUserDto = {
+    const newUser: InsertUser = {
       personId: personId,
       phoneNumber: phoneNumber,
       profilePhotoKey: key,
@@ -92,6 +91,7 @@ class UsersService {
     await usersRepository.update(newUser);
     await s3Service.uploadImage(buffer, key, type);
   };
+  updateEmail = async (email:string) => {};
 }
 
 const usersService = new UsersService();

@@ -103,6 +103,14 @@ LoginOrRegistration:
   handler: src/lambdas/users/loginOrRegister.handler
   events:
     - http:
-        path: user/login
+        path: users
         method: post
+        cors: true
+
+UserUpdate:
+  handler: src/lambdas/users/update.handler
+  events:
+    - http:
+        path: users/{updateField}
+        method: put
         cors: true

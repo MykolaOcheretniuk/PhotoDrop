@@ -1,26 +1,26 @@
+import { randomUUID } from "crypto";
 import albumsRepository from "src/db/repositories/albumsRepository";
 import personsRepository from "src/db/repositories/personsRepository";
-import { CreateAlbum } from "src/db/schema/album";
+import { InsertAlbum } from "src/db/schema/album";
 import { AlbumError } from "src/errors/albumError";
 import { ApiError } from "src/errors/apiError";
-import { AlbumInfo } from "src/models/album/album";
-import { AlbumDetails } from "src/models/album/albumDetails";
-import { CreateAlbumModel } from "src/models/album/createAlbumModel";
+import { AlbumDetails, AlbumInfo, CreateAlbumModel } from "src/models/albums";
 import photosService from "./photoServices/photosService";
 
 class AlbumsService {
   create = async (albumModel: CreateAlbumModel, creatorId: string) => {
     const { title, location, dataPicker } = albumModel;
-    const newAlbum: CreateAlbum = {
+    const albumId = randomUUID();
+    const newAlbum: InsertAlbum = {
+      id: albumId,
       title: title,
       location: location,
       dataPicker: dataPicker,
       createdDate: new Date(),
     };
-    const insertResult = await albumsRepository.addNew(newAlbum);
-    const { insertId: albumId } = insertResult[0];
+    await albumsRepository.addNew(newAlbum);
     await albumsRepository.associateWithPerson(albumId, creatorId, true);
-    return insertResult;
+    return newAlbum;
   };
   getAll = async (photographerId: string): Promise<AlbumInfo[]> => {
     const result = await albumsRepository.getAllPhotographerAlbums(
@@ -29,7 +29,7 @@ class AlbumsService {
     return result;
   };
   getById = async (
-    albumId: number,
+    albumId: string,
     personId: string
   ): Promise<AlbumDetails> => {
     const result = await albumsRepository.getById(albumId);
@@ -61,7 +61,7 @@ class AlbumsService {
       id: id,
     });
   };
-  addClients = async (albumId: number, clientIds: string[]) => {
+  addClients = async (albumId: string, clientIds: string[]) => {
     const album = await albumsRepository.getById(albumId);
     if (!album) {
       throw ApiError.NotFound("Album");

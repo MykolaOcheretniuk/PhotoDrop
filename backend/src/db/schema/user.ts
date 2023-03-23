@@ -1,5 +1,5 @@
 import { varchar } from "drizzle-orm/mysql-core/columns";
-import { mysqlTable } from "drizzle-orm/mysql-core/table";
+import { InferModel, mysqlTable } from "drizzle-orm/mysql-core/table";
 import { persons } from "./person";
 
 export const users = mysqlTable("Users", {
@@ -10,6 +10,8 @@ export const users = mysqlTable("Users", {
   profilePhotoKey: varchar("ProfilePhotoKey", { length: 256 }),
   phoneNumber: varchar("PhoneNumber", { length: 100 }).notNull(),
 });
+
+export type InsertUser = InferModel<typeof users>;
 
 export interface User {
   personId: string;

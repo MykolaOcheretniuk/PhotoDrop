@@ -1,19 +1,19 @@
 import { eq, and } from "drizzle-orm/expressions";
-import { PhotoDetails } from "src/models/photos/photoDetails";
+import { PhotoDetails } from "src/models/photos";
 import { albums } from "../schema/album";
 import { personAlbums } from "../schema/personAlbum";
-import { CreatePhoto, Photo, photos } from "../schema/photo";
+import { InsertPhoto, Photo, photos } from "../schema/photo";
 import { BaseRepository } from "./baseRepository";
 
-class PhotosRepository extends BaseRepository<Photo | CreatePhoto> {
-  getAlbumPhotos = async (albumId: number): Promise<Photo[]> => {
+class PhotosRepository extends BaseRepository<Photo | InsertPhoto> {
+  getAlbumPhotos = async (albumId: string): Promise<Photo[]> => {
     const result = await this.db
       .select()
       .from(photos)
       .where(eq(photos.albumId, albumId));
     return result;
   };
-  getByNameInAlbum = async (name: string, albumId: number): Promise<Photo> => {
+  getByNameInAlbum = async (name: string, albumId: string): Promise<Photo> => {
     const result = await this.db
       .select()
       .from(photos)

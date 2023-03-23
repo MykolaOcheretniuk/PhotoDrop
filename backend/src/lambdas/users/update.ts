@@ -3,7 +3,6 @@ import {
   APIGatewayProxyResult,
 } from "aws-lambda/trigger/api-gateway-proxy";
 import { JwtPayload } from "jsonwebtoken";
-import albumsService from "src/services/albumsService";
 import authService from "src/services/authService";
 import jwtTokensService from "src/services/utils/jwtTokensService";
 import responseCreator from "src/services/utils/responseCreator";
@@ -22,12 +21,23 @@ export const handler = async (
     const { personId, personRole } = tokenPayload;
     await authService.checkAuth(authToken, personRole);
     if (event.pathParameters) {
-      const id = event.pathParameters["id"] as string;
-      const album = await albumsService.getById(id, personId);
-      return responseCreator.default(JSON.stringify(album), 200);
+      const updateField = event.pathParameters["updateField"] as string;
+      switch (updateField.toLocaleLowerCase()) {
+        case "email":
+          return responseCreator.default(JSON.stringify("email"), 200);
+        case "name":
+          return responseCreator.default(JSON.stringify("name"), 200);
+        default:
+          return responseCreator.default(
+            JSON.stringify("Incorrect path params"),
+            400
+          );
+      }
     }
-    const albums = await albumsService.getAll(personId);
-    return responseCreator.default(JSON.stringify(albums), 200);
+    return responseCreator.default(
+      JSON.stringify("Incorrect path params"),
+      400
+    );
   } catch (err) {
     return responseCreator.error(err);
   }

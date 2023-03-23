@@ -1,11 +1,11 @@
 import { and, eq } from "drizzle-orm/expressions";
-import { AlbumInfo } from "src/models/album/album";
-import { Album, albums, CreateAlbum } from "../schema/album";
+import { AlbumInfo } from "src/models/albums";
+import { Album, albums, InsertAlbum } from "../schema/album";
 import { personAlbums } from "../schema/personAlbum";
 import { BaseRepository } from "./baseRepository";
 
-class AlbumsRepository extends BaseRepository<Album | CreateAlbum> {
-  getById = async (albumId: number): Promise<Album> => {
+class AlbumsRepository extends BaseRepository<Album | InsertAlbum> {
+  getById = async (albumId: string): Promise<Album> => {
     const album = await this.db
       .select()
       .from(albums)
@@ -13,7 +13,7 @@ class AlbumsRepository extends BaseRepository<Album | CreateAlbum> {
     return album[0];
   };
   associateWithPerson = async (
-    albumId: number,
+    albumId: string,
     personId: string,
     isActivated: boolean
   ) => {
@@ -45,7 +45,7 @@ class AlbumsRepository extends BaseRepository<Album | CreateAlbum> {
   };
   isAlbumActivated = async (
     personId: string,
-    albumId: number
+    albumId: string
   ): Promise<boolean> => {
     const result = await this.db
       .select({
@@ -63,7 +63,7 @@ class AlbumsRepository extends BaseRepository<Album | CreateAlbum> {
   };
   isAssociatedWithPerson = async (
     personId: string,
-    albumId: number
+    albumId: string
   ): Promise<boolean> => {
     const result = await this.db
       .select()

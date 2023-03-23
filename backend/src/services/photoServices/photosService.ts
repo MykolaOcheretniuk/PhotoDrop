@@ -2,18 +2,18 @@ import albumsRepository from "src/db/repositories/albumsRepository";
 import photosRepository from "src/db/repositories/photosRepository";
 import { S3Operations } from "src/enums/s3Operations";
 import { ApiError } from "src/errors/apiError";
-import { PhotoModel } from "src/models/photos/photo";
 import photoEditor from "./photoEditor";
 import s3Service from "../awsServices/s3Service";
 import getEnv from "../utils/getEnv";
-import { CreatePhoto } from "src/db/schema/photo";
+import { InsertPhoto } from "src/db/schema/photo";
+import { PhotoModel } from "src/models/photos";
 
 class PhotosService {
   addNew = async (
     key: string,
     albumTitle: string,
     photoName: string,
-    albumId: number
+    albumId: string
   ) => {
     const existingPhoto = await photosRepository.getByNameInAlbum(
       photoName,
@@ -46,7 +46,7 @@ class PhotosService {
     );
     const promisesResult = await Promise.all(promisesArray);
     await s3Service.uploadEditedPhotos(promisesResult, keys);
-    const photo: CreatePhoto = {
+    const photo: InsertPhoto = {
       albumId: albumId,
       albumTitle: albumTitle,
       photoName: photoName,
@@ -55,7 +55,7 @@ class PhotosService {
     return result;
   };
   getAlbumPhotos = async (
-    albumId: number,
+    albumId: string,
     personId: string
   ): Promise<PhotoModel[]> => {
     const isAlbumActivated = await albumsRepository.isAlbumActivated(
