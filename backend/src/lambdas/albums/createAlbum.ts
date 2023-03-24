@@ -4,7 +4,7 @@ import {
 } from "aws-lambda/trigger/api-gateway-proxy";
 import { JwtPayload } from "jsonwebtoken";
 import { Roles } from "src/enums/roles";
-import { CreateAlbumModel } from "src/models/album/createAlbumModel";
+import { CreateAlbumModel } from "src/models/albums";
 import albumsService from "src/services/albumsService";
 import authService from "src/services/authService";
 import jwtTokensService from "src/services/utils/jwtTokensService";

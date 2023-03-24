@@ -4,7 +4,7 @@ export interface AlbumInfo {
   id: string;
   title: string;
   location: string;
-  createdDate: Date;
+  createdDate: string;
 }
 
 export interface AlbumDetails extends AlbumInfo {

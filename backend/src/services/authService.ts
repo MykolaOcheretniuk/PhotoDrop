@@ -8,11 +8,11 @@ import { Roles } from "src/enums/roles";
 import { ApiError } from "src/errors/apiError";
 import { PhotographerError } from "src/errors/photographersError";
 import { TokensResponse } from "src/models/tokensResponse";
-import { LoginAndRegistrationModel } from "src/models/users/loginAndRegistration";
 import codesService from "./codesService";
 import jwtTokensService from "./utils/jwtTokensService";
 import passwordService from "./utils/passwordService";
 import usersService from "./usersService";
+import { LoginAndRegistrationModel } from "src/models/users";
 
 class AuthService {
   signInPhotographer = async (

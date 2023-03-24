@@ -7,6 +7,7 @@ import s3Service from "../awsServices/s3Service";
 import getEnv from "../utils/getEnv";
 import { InsertPhoto } from "src/db/schema/photo";
 import { PhotoModel } from "src/models/photos";
+import { PhotoKeys } from "src/enums/photoKeys";
 
 class PhotosService {
   addNew = async (
@@ -28,12 +29,12 @@ class PhotosService {
     );
     await photoEditor.setWatermark(watermarkBuffer);
     const thumbnailPromise = photoEditor.createThumbnail(photoBuffer);
-    const thumbnailKey = `thumbnails/${albumTitle}/${photoName}`;
+    const thumbnailKey = `${PhotoKeys.THUMBNAILS}/${albumTitle}/${photoName}`;
     const watermarkedPhotoPromise = photoEditor.addWatermark(photoBuffer);
-    const watermarkedPhotoKey = `watermarkedPhotos/${albumTitle}/${photoName}`;
+    const watermarkedPhotoKey = `${PhotoKeys.WATERMARKED_PHOTOS}/${albumTitle}/${photoName}`;
     const watermarkedThumbnailPromise =
       photoEditor.createWatermarkedThumbnail(photoBuffer);
-    const watermarkedThumbnailKey = `watermarkedThumbnails/${albumTitle}/${photoName}`;
+    const watermarkedThumbnailKey = `${PhotoKeys.WATERMARKED_THUMBNAILS}/${albumTitle}/${photoName}`;
     const promisesArray = new Array(
       thumbnailPromise,
       watermarkedPhotoPromise,

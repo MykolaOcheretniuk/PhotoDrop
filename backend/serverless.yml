@@ -27,7 +27,7 @@ provider:
           Action:
             - ssm:GetParameter
           Resource: "*"
-      
+
   environment:
     PHOTO_DROP_DB_USERNAME: ${ssm:PHOTO_DROP_DB_USERNAME}
     PHOTO_DROP_DB_PASSWORD: ${ssm:PHOTO_DROP_DB_PASSWORD}
@@ -42,6 +42,8 @@ provider:
     TWILIO_ACCOUNT_SID: ${ssm:TWILIO_ACCOUNT_SID}
     TWILIO_AUTH_TOKEN: ${ssm:TWILIO_AUTH_TOKEN}
     TWILIO_PHONE_NUMBERS_PARAM_NAME: TWILIO_PHONE_NUMBERS
+    STRIPE_PUBLISHABLE_KEY: ${ssm:STRIPE_PUBLISHABLE_KEY}
+    STRIPE_SECRET_KEY: ${ssm:STRIPE_SECRET_KEY}
 
 functions: ${file(yml/functions.yml)}
 resources: ${file(yml/resources.yml)}

@@ -2,8 +2,6 @@ import {
   APIGatewayProxyEvent,
   APIGatewayProxyResult,
 } from "aws-lambda/trigger/api-gateway-proxy";
-import { LoginAndRegistrationModel } from "src/models/users";
-import authService from "src/services/authService";
 import responseCreator from "src/services/utils/responseCreator";
 
 export const handler = async (
@@ -13,9 +11,10 @@ export const handler = async (
     if (!event.body) {
       return responseCreator.missedEventBody();
     }
-    const userData: LoginAndRegistrationModel = JSON.parse(event.body);
-    const jwtResponse = await authService.loginRegisterUser(userData);
-    return responseCreator.default(JSON.stringify(jwtResponse), 200);
+    const eventBody = JSON.parse(event.body);
+    const stripeSignature = event.headers["Stripe-Signature"];
+
+    return responseCreator.default(JSON.stringify("hello"), 200);
   } catch (err) {
     return responseCreator.error(err);
   }

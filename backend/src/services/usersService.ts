@@ -2,14 +2,16 @@ import { randomUUID } from "crypto";
 import personsRepository from "src/db/repositories/personsRepository";
 import rolesRepository from "src/db/repositories/rolesRepository";
 import usersRepository from "src/db/repositories/usersRepository";
+import { InsertPerson } from "src/db/schema/person";
 import { InsertUser, User } from "src/db/schema/user";
 import { S3Operations } from "src/enums/s3Operations";
 import { ApiError } from "src/errors/apiError";
 import { UploadPhoto } from "src/models/photos";
+import { UserModel } from "src/models/users";
 import s3Service from "./awsServices/s3Service";
 
 class UsersService {
-  getAll = async (): Promise<User[]> => {
+  getAll = async (): Promise<UserModel[]> => {
     const users = await usersRepository.getAll();
     const userModels = users.map(async (user) => {
       const { phoneNumber } = user;
@@ -25,12 +27,10 @@ class UsersService {
         );
         profilePhotoUrl = url;
       }
-      return Object.assign(
-        {
-          profilePhotoUrl: profilePhotoUrl,
-        },
-        user
-      );
+      return Object.assign({}, user, {
+        profilePhotoUrl: profilePhotoUrl,
+        profilePhotoKey: undefined,
+      });
     });
     return await Promise.all(userModels);
   };
@@ -74,9 +74,6 @@ class UsersService {
       throw ApiError.NotFound("User");
     }
     const { personId, phoneNumber } = user;
-    if (!personId) {
-      throw ApiError.IsNull("personId");
-    }
     const { name, type, data } = photo;
     const key = `selfies/${userId}/${name}`;
     const newUser: InsertUser = {
@@ -88,7 +85,22 @@ class UsersService {
     await usersRepository.update(newUser);
     await s3Service.uploadImage(buffer, key, type);
   };
-  updateEmail = async (email: string) => {};
+  updateEmail = async (email: string, personId: string) => {
+    const user = await personsRepository.getById(personId);
+    if (!user) {
+      throw ApiError.NotFound("User");
+    }
+    const newUser: InsertPerson = Object.assign(user, { email: email });
+    await personsRepository.update(newUser);
+  };
+  updateName = async (name: string, personId: string) => {
+    const user = await personsRepository.getById(personId);
+    if (!user) {
+      throw ApiError.NotFound("User");
+    }
+    const newUser: InsertPerson = Object.assign(user, { fullName: name });
+    await personsRepository.update(newUser);
+  };
 }
 
 const usersService = new UsersService();

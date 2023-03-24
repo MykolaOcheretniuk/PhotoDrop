@@ -10,4 +10,5 @@ export const persons = mysqlTable("Persons", {
     .references(() => roles.id)
     .notNull(),
 });
-export type Person = InferModel<typeof persons,"select">
+export type Person = InferModel<typeof persons, "select">;
+export type InsertPerson = InferModel<typeof persons, "insert">;

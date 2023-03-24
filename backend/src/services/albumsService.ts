@@ -6,6 +6,7 @@ import { AlbumError } from "src/errors/albumError";
 import { ApiError } from "src/errors/apiError";
 import { AlbumDetails, AlbumInfo, CreateAlbumModel } from "src/models/albums";
 import photosService from "./photoServices/photosService";
+import { format } from "date-fns";
 
 class AlbumsService {
   create = async (albumModel: CreateAlbumModel, creatorId: string) => {
@@ -23,9 +24,17 @@ class AlbumsService {
     return newAlbum;
   };
   getAll = async (photographerId: string): Promise<AlbumInfo[]> => {
-    const result = await albumsRepository.getAllPhotographerAlbums(
+    const albums = await albumsRepository.getAllPhotographerAlbums(
       photographerId
     );
+    const result: AlbumInfo[] = albums.map((album) => {
+      const { id, createdDate } = album;
+      return Object.assign({}, album, {
+        id: id,
+        createdDate: format(createdDate, "yyyy-MM-dd"),
+        dataPicker: undefined,
+      });
+    });
     return result;
   };
   getById = async (
@@ -36,29 +45,28 @@ class AlbumsService {
     if (!result) {
       throw ApiError.NotFound("Album");
     }
-    const { id } = result;
-    if (!id) {
-      throw AlbumError.IncorrectValue("Id");
-    }
+    const { id, createdDate } = result;
     const isPersonAssociatedToAlbum =
       await albumsRepository.isAssociatedWithPerson(personId, albumId);
     if (!isPersonAssociatedToAlbum) {
       throw AlbumError.NotBelongs(personId);
     }
     const photos = await photosService.getAlbumPhotos(albumId, personId);
-    return Object.assign(result, { id: id, photos: photos });
+    return Object.assign(result, {
+      id: id,
+      photos: photos,
+      createdDate: format(createdDate, "yyyy-MM-dd"),
+    });
   };
   getByTitle = async (title: string): Promise<AlbumInfo> => {
     const album = await albumsRepository.getByTitle(title);
     if (!album) {
       throw ApiError.NotFound("Album");
     }
-    const { id } = album;
-    if (!id) {
-      throw AlbumError.IncorrectValue("Id");
-    }
+    const { id, createdDate } = album;
     return Object.assign(album, {
       id: id,
+      createdDate: format(createdDate, "yyyy-MM-dd"),
     });
   };
   addClients = async (albumId: string, clientIds: string[]) => {

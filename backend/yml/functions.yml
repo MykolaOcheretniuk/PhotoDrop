@@ -114,3 +114,11 @@ UserUpdate:
         path: users/{updateField}
         method: put
         cors: true
+
+CreatePayment:
+  handler: src/lambdas/payments/createIntent.handler
+  events:
+    - http:
+        path: payment
+        method: get
+        cors: true

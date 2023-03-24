@@ -10,7 +10,6 @@ export abstract class BaseRepository<T extends InferModel<AnyMySqlTable>> {
     this.db = database;
   }
   addNew = async (entity: T) => {
-    const result = await this.db.insert(this.table).values(entity);
-    return result;
+    return await this.db.insert(this.table).values(entity);
   };
 }

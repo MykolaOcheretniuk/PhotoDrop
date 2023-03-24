@@ -1,5 +1,4 @@
 import { and, eq } from "drizzle-orm/expressions";
-import { AlbumInfo } from "src/models/albums";
 import { Album, albums, InsertAlbum } from "../schema/album";
 import { personAlbums } from "../schema/personAlbum";
 import { BaseRepository } from "./baseRepository";
@@ -23,13 +22,14 @@ class AlbumsRepository extends BaseRepository<Album | InsertAlbum> {
       isActivated: isActivated,
     });
   };
-  getAllPhotographerAlbums = async (personId: string): Promise<AlbumInfo[]> => {
+  getAllPhotographerAlbums = async (personId: string): Promise<Album[]> => {
     const result = await this.db
       .select({
         id: albums.id,
         title: albums.title,
         location: albums.location,
         createdDate: albums.createdDate,
+        dataPicker: albums.dataPicker,
       })
       .from(albums)
       .leftJoin(personAlbums, eq(personAlbums.albumId, albums.id))

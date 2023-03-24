@@ -37,6 +37,13 @@ class ResponseCreator {
       body: JSON.stringify(`JSON body is missing.`),
     };
   };
+  missedQueryStringParams = () => {
+    return {
+      statusCode: 400,
+      headers: HEADERS,
+      body: JSON.stringify(`Query string params is missing.`),
+    };
+  };
 }
 const responseCreator = new ResponseCreator();
 export default responseCreator;
