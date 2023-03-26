@@ -81,7 +81,7 @@
 
 ## Get Confirmation Code
 
-    https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/user/getConfirmationCode
+    https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/user/code
 
      Required JSON Body:
     {
@@ -89,7 +89,7 @@
     }
 
     curl --request POST \
-    --url https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/user/getConfirmationCode \
+    --url https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/user/code \
     --header 'Content-Type: application/json' \
     --data '{
         "phoneNumber":"+380999999999"
@@ -97,16 +97,18 @@
 
 ## Resend Code
 
-    https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/user/resendCode
+    https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/user/code?resend=true
 
     Required JSON Body:
     {
         "phoneNumber":"+380999999999"
     }
+    Required query param: resend
+    resend param should be true 
 
     curl --request POST \
 
-    --url https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/user/resendCode \
+    --url https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/user/code?resend=true \
     --header 'Content-Type: application/json' \
     --data '{
     "phoneNumber":"+380999999999"

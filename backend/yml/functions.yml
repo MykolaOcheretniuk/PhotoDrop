@@ -87,15 +87,7 @@ GetConfirmationCode:
   handler: src/lambdas/users/getConfirmationCode.handler
   events:
     - http:
-        path: user/getConfirmationCode
-        method: post
-        cors: true
-
-ResendCode:
-  handler: src/lambdas/users/resendCode.handler
-  events:
-    - http:
-        path: user/resendCode
+        path: user/code
         method: post
         cors: true
 
