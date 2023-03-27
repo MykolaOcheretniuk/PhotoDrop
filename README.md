@@ -79,6 +79,8 @@
             }
         ]
 
+# Users Actions
+
 ## Get Confirmation Code
 
     https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/user/code
