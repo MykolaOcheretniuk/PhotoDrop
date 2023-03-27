@@ -1,4 +1,5 @@
 import { PaymentError } from "src/errors/payment";
+import { PaymentIntentDescription } from "src/models/payments";
 import Stripe from "stripe";
 import getEnv from "./getEnv";
 
@@ -10,13 +11,13 @@ class StripeService {
     toPay: number,
     currency: string,
     paymentTypes: string[],
-    personId: string
+    description: PaymentIntentDescription
   ): Promise<string> => {
     const paymentIntent = await this.stripe.paymentIntents.create({
       amount: toPay,
       currency: currency,
       payment_method_types: paymentTypes,
-      description: personId,
+      description: JSON.stringify(description),
     });
     const { client_secret: clientSecret } = paymentIntent;
     if (!clientSecret) {
@@ -24,6 +25,7 @@ class StripeService {
     }
     return clientSecret;
   };
+
 }
 
 const stripeService = new StripeService();

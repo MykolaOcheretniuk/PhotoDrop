@@ -82,6 +82,16 @@ class AlbumsService {
       await albumsRepository.associateWithPerson(albumId, clientIds[i], false);
     }
   };
+  isPersonHasAlbum = async (personId: string, albumId: string) => {
+    const existingAlbum = await albumsRepository.getById(albumId);
+    if (!existingAlbum) {
+      throw ApiError.NotFound("Album");
+    }
+    return await albumsRepository.isAssociatedWithPerson(personId, albumId);
+  };
+  activateAlbum = async (albumId: string, clientId: string) => {
+    await albumsRepository.activateAlbum(albumId, clientId);
+  };
 }
 
 const albumsService = new AlbumsService();

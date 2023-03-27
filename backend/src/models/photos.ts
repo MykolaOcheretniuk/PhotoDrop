@@ -14,7 +14,8 @@ export interface PhotoDetails {
 
 export interface PhotoModel {
   id: number;
-  url: string;
+  thumbnailUrl: string;
+  originalUrl: string;
 }
 
 export interface MultiplePhotosUpload {

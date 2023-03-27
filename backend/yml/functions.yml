@@ -114,3 +114,11 @@ CreatePayment:
         path: payment
         method: get
         cors: true
+
+PaymentWebhookHandler:
+  handler: src/lambdas/payments/handleWebhook.handler
+  events:
+    - http:
+        path: handleWebhook
+        method: post
+        cors: true

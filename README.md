@@ -164,3 +164,12 @@
 
 --url https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/photos \
  --header 'Authorization: JWT_AUTH_TOKEN'
+
+## Create Payment Intend
+    https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/payment?albumId=albumId
+
+    Required query param: albumId
+
+    curl --request GET \
+  --url 'https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/payment?albumId=4e18cdf5-2fd2-47bc-87a0-2b1fa3456ad4' \
+  --header 'Authorization: JWT_AUTH_TOKEN'

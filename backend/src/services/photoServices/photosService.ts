@@ -1,7 +1,6 @@
 import albumsRepository from "src/db/repositories/albumsRepository";
 import photosRepository from "src/db/repositories/photosRepository";
 import { S3Operations } from "src/enums/s3Operations";
-import { ApiError } from "src/errors/apiError";
 import photoEditor from "./photoEditor";
 import s3Service from "../awsServices/s3Service";
 import getEnv from "../utils/getEnv";
@@ -63,22 +62,30 @@ class PhotosService {
       personId,
       albumId
     );
-    let baseKey = "watermarkedThumbnails/";
+    let baseKey = PhotoKeys.WATERMARKED_THUMBNAILS;
+    let originalKey = PhotoKeys.WATERMARKED_PHOTOS;
     if (isAlbumActivated) {
-      baseKey = "thumbnails/";
+      originalKey = PhotoKeys.ORIGINAL_PHOTOS;
+      baseKey = PhotoKeys.THUMBNAILS;
     }
     const photos = await photosRepository.getAlbumPhotos(albumId);
     const result = photos.map(async (photo) => {
       const { albumTitle, photoName, id } = photo;
-      const key = baseKey + `${albumTitle}/${photoName}`;
-      const accessUrl = await s3Service.createPreSignedUrl(
+      const key = `${baseKey}/` + `${albumTitle}/${photoName}`;
+      const photoKey = `${originalKey}/` + `${albumTitle}/${photoName}`;
+      const thumbnailUrl = await s3Service.createPreSignedUrl(
         key,
         S3Operations.GET_OBJECT
       );
-      if (!id) {
-        throw ApiError.IsNull("Id");
-      }
-      return { id: id, url: accessUrl };
+      const originalPhotoUrl = await s3Service.createPreSignedUrl(
+        photoKey,
+        S3Operations.GET_OBJECT
+      );
+      return {
+        id: id,
+        thumbnailUrl: thumbnailUrl,
+        originalUrl: originalPhotoUrl,
+      };
     });
     return await Promise.all(result);
   };
@@ -86,16 +93,27 @@ class PhotosService {
     const photos = await photosRepository.getAllPersonPhotos(personId);
     const result = photos.map(async (photo) => {
       const { isActivated, albumTitle, photoName, id } = photo;
-      let baseKey = "thumbnails/";
+      let baseKey = PhotoKeys.THUMBNAILS;
+      let originalKey = PhotoKeys.ORIGINAL_PHOTOS;
       if (!isActivated) {
-        baseKey = "watermarkedThumbnails/";
+        baseKey = PhotoKeys.WATERMARKED_THUMBNAILS;
+        originalKey = PhotoKeys.WATERMARKED_PHOTOS;
       }
-      const key = baseKey + `${albumTitle}/${photoName}`;
-      const accessUrl = await s3Service.createPreSignedUrl(
+      const key = `${baseKey}/` + `${albumTitle}/${photoName}`;
+      const originalPhotoKey = `${originalKey}/` + `${albumTitle}/${photoName}`;
+      const thumbnailUrl = await s3Service.createPreSignedUrl(
         key,
         S3Operations.GET_OBJECT
       );
-      return { id: id, url: accessUrl };
+      const originalPhotoUrl = await s3Service.createPreSignedUrl(
+        originalPhotoKey,
+        S3Operations.GET_OBJECT
+      );
+      return {
+        id: id,
+        thumbnailUrl: thumbnailUrl,
+        originalUrl: originalPhotoUrl,
+      };
     });
     return await Promise.all(result);
   };

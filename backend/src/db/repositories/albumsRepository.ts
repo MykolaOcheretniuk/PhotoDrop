@@ -79,6 +79,19 @@ class AlbumsRepository extends BaseRepository<Album | InsertAlbum> {
     }
     return false;
   };
+  activateAlbum = async (albumId: string, personId: string) => {
+    await this.db
+      .update(personAlbums)
+      .set({
+        isActivated: true,
+      })
+      .where(
+        and(
+          eq(personAlbums.albumId, albumId),
+          eq(personAlbums.personId, personId)
+        )
+      );
+  };
 }
 
 const albumsRepository = new AlbumsRepository(albums);
