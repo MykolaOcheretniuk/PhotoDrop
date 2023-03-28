@@ -187,10 +187,10 @@
 
 ## Create Payment Intend
 
-    https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/payment?albumId=albumId
+    https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/payment?albumId=UUID
 
     Required query param: albumId
 
     curl --request GET \
-    --url 'https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/payment?albumId=4e18cdf5-2fd2-47bc-87a0-2b1fa3456ad4' \
+    --url 'https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/payment?albumId=UUID' \
     --header 'Authorization: JWT_AUTH_TOKEN'
