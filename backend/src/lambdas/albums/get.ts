@@ -23,7 +23,7 @@ export const handler = async (
     await authService.checkAuth(authToken, personRole);
     if (event.queryStringParameters) {
       const id = event.queryStringParameters["id"] as string;
-      const album = await albumsService.getById(id, personId);
+      const album = await albumsService.getWithPhotos(id, personId);
       return responseCreator.default(JSON.stringify(album), 200);
     }
     const albums = await albumsService.getAll(personId);

@@ -1,4 +1,4 @@
-import { date, varchar } from "drizzle-orm/mysql-core/columns";
+import { date, int, varchar } from "drizzle-orm/mysql-core/columns";
 import { InferModel, mysqlTable } from "drizzle-orm/mysql-core/table";
 
 export const albums = mysqlTable("Albums", {
@@ -7,6 +7,7 @@ export const albums = mysqlTable("Albums", {
   location: varchar("Location", { length: 100 }).notNull(),
   dataPicker: varchar("Datapicker", { length: 100 }).notNull(),
   createdDate: date("CreatedDate").notNull(),
+  price: int("Price").notNull().default(5),
 });
 export type InsertAlbum = InferModel<typeof albums, "insert">;
 export type Album = InferModel<typeof albums, "select">;

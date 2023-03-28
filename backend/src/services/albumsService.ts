@@ -23,6 +23,13 @@ class AlbumsService {
     await albumsRepository.associateWithPerson(albumId, creatorId, true);
     return newAlbum;
   };
+  getById = async (albumId: string) => {
+    const existingAlbum = await albumsRepository.getById(albumId);
+    if (!existingAlbum) {
+      throw ApiError.NotFound("Album");
+    }
+    return existingAlbum;
+  };
   getAll = async (photographerId: string): Promise<AlbumInfo[]> => {
     const albums = await albumsRepository.getAllPhotographerAlbums(
       photographerId
@@ -37,7 +44,7 @@ class AlbumsService {
     });
     return result;
   };
-  getById = async (
+  getWithPhotos = async (
     albumId: string,
     personId: string
   ): Promise<AlbumDetails> => {
@@ -82,12 +89,17 @@ class AlbumsService {
       await albumsRepository.associateWithPerson(albumId, clientIds[i], false);
     }
   };
-  isPersonHasAlbum = async (personId: string, albumId: string) => {
-    const existingAlbum = await albumsRepository.getById(albumId);
-    if (!existingAlbum) {
-      throw ApiError.NotFound("Album");
-    }
+  isPersonHasAlbum = async (
+    personId: string,
+    albumId: string
+  ): Promise<boolean> => {
     return await albumsRepository.isAssociatedWithPerson(personId, albumId);
+  };
+  isAlbumActivated = async (
+    personId: string,
+    albumId: string
+  ): Promise<boolean> => {
+    return await albumsRepository.isAlbumActivated(personId, albumId);
   };
   activateAlbum = async (albumId: string, clientId: string) => {
     await albumsRepository.activateAlbum(albumId, clientId);

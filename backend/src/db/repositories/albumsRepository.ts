@@ -30,6 +30,7 @@ class AlbumsRepository extends BaseRepository<Album | InsertAlbum> {
         location: albums.location,
         createdDate: albums.createdDate,
         dataPicker: albums.dataPicker,
+        price: albums.price,
       })
       .from(albums)
       .leftJoin(personAlbums, eq(personAlbums.albumId, albums.id))

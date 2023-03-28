@@ -36,12 +36,22 @@ export const handler = async (
             400
           );
         }
+        if ((await albumsService.isAlbumActivated(personId, albumId))) {
+          return responseCreator.default(
+            JSON.stringify(
+              `Person with id:${personId} already has album :${albumId}`
+            ),
+            400
+          );
+        }
+        const existingAlbum = await albumsService.getById(albumId);
+        const { price: albumPrice } = existingAlbum;
         const description: PaymentIntentDescription = {
           personId: personId,
           albumId: albumId,
         };
         const clientSecret = await stripeService.createIntent(
-          500,
+          albumPrice * 100,
           "usd",
           ["card"],
           description
