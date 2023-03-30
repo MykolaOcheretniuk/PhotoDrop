@@ -17,3 +17,8 @@ export interface CreateAlbumModel {
   location: string;
   dataPicker: string;
 }
+export interface UserAlbumModel {
+  id:string,
+  title: string;
+  previewUrl: string;
+}

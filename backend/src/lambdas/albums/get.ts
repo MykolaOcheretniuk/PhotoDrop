@@ -3,6 +3,7 @@ import {
   APIGatewayProxyResult,
 } from "aws-lambda/trigger/api-gateway-proxy";
 import { JwtPayload } from "jsonwebtoken";
+import { Roles } from "src/enums/roles";
 import albumsService from "src/services/albumsService";
 import authService from "src/services/authService";
 import jwtTokensService from "src/services/utils/jwtTokensService";
@@ -23,10 +24,18 @@ export const handler = async (
     await authService.checkAuth(authToken, personRole);
     if (event.queryStringParameters) {
       const id = event.queryStringParameters["id"] as string;
+      if (personRole === Roles.PHOTOGRAPHER) {
+        const album = await albumsService.getById(id);
+        return responseCreator.default(JSON.stringify(album), 200);
+      }
       const album = await albumsService.getWithPhotos(id, personId);
       return responseCreator.default(JSON.stringify(album), 200);
     }
-    const albums = await albumsService.getAll(personId);
+    if (personRole === Roles.PHOTOGRAPHER) {
+      const albums = await albumsService.getAllPhotographer(personId);
+      return responseCreator.default(JSON.stringify(albums), 200);
+    }
+    const albums = await albumsService.getAllUser(personId);
     return responseCreator.default(JSON.stringify(albums), 200);
   } catch (err) {
     return responseCreator.error(err);

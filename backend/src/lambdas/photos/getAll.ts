@@ -21,7 +21,7 @@ export const handler = async (
       authToken
     )) as JwtPayload;
     await authService.checkAuth(authToken, Roles.USER);
-    const photos = await photosService.getAllPersonPhotos(personId);
+    const photos = await photosService.getAllUserPhotos(personId);
     return responseCreator.default(JSON.stringify(photos), 200);
   } catch (err) {
     return responseCreator.error(err);

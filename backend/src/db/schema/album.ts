@@ -7,6 +7,7 @@ export const albums = mysqlTable("Albums", {
   location: varchar("Location", { length: 100 }).notNull(),
   dataPicker: varchar("Datapicker", { length: 100 }).notNull(),
   createdDate: date("CreatedDate").notNull(),
+  photographerId: varchar("PhotographerId", { length: 100 }).notNull(),
   price: int("Price").notNull().default(5),
 });
 export type InsertAlbum = InferModel<typeof albums, "insert">;

@@ -1,4 +1,3 @@
-import albumsRepository from "src/db/repositories/albumsRepository";
 import photosRepository from "src/db/repositories/photosRepository";
 import { S3Operations } from "src/enums/s3Operations";
 import photoEditor from "./photoEditor";
@@ -7,6 +6,7 @@ import getEnv from "../utils/getEnv";
 import { InsertPhoto } from "src/db/schema/photo";
 import { PhotoModel } from "src/models/photos";
 import { PhotoKeys } from "src/enums/photoKeys";
+import createKeys from "../utils/photoKeysCreator";
 
 class PhotosService {
   addNew = async (
@@ -22,12 +22,12 @@ class PhotosService {
     );
     await photoEditor.setWatermark(watermarkBuffer);
     const thumbnailPromise = photoEditor.createThumbnail(photoBuffer);
-    const thumbnailKey = `${PhotoKeys.THUMBNAILS}/${albumTitle}/${userId}/${photoName}`;
+    const thumbnailKey = `${PhotoKeys.THUMBNAILS}/${userId}/${albumTitle}/${photoName}`;
     const watermarkedPhotoPromise = photoEditor.addWatermark(photoBuffer);
-    const watermarkedPhotoKey = `${PhotoKeys.WATERMARKED_PHOTOS}/${albumTitle}/${userId}/${photoName}`;
+    const watermarkedPhotoKey = `${PhotoKeys.WATERMARKED_PHOTOS}/${userId}/${albumTitle}/${photoName}`;
     const watermarkedThumbnailPromise =
       photoEditor.createWatermarkedThumbnail(photoBuffer);
-    const watermarkedThumbnailKey = `${PhotoKeys.WATERMARKED_THUMBNAILS}/${albumTitle}/${userId}/${photoName}`;
+    const watermarkedThumbnailKey = `${PhotoKeys.WATERMARKED_THUMBNAILS}/${userId}/${albumTitle}/${photoName}`;
     const promisesArray = new Array(
       thumbnailPromise,
       watermarkedPhotoPromise,
@@ -47,28 +47,22 @@ class PhotosService {
     };
     const result = await photosRepository.addNew(photo);
     const { insertId: photoId } = result[0];
-    await photosRepository.associateWithPerson(userId, photoId);
+    await photosRepository.associateWithUser(userId, photoId, albumId);
     return result;
   };
   getAlbumPhotos = async (
     albumId: string,
     personId: string
   ): Promise<PhotoModel[]> => {
-    const isAlbumActivated = await albumsRepository.isAlbumActivated(
-      personId,
-      albumId
-    );
-    let baseKey = PhotoKeys.WATERMARKED_THUMBNAILS;
-    let originalKey = PhotoKeys.WATERMARKED_PHOTOS;
-    if (isAlbumActivated) {
-      originalKey = PhotoKeys.ORIGINAL_PHOTOS;
-      baseKey = PhotoKeys.THUMBNAILS;
-    }
-    const photos = await photosRepository.getAlbumPhotos(albumId);
+    const photos = await photosRepository.getAlbumPhotos(albumId, personId);
     const result = photos.map(async (photo) => {
-      const { albumTitle, photoName, id } = photo;
-      const key = `${baseKey}/` + `${albumTitle}/${photoName}`;
-      const photoKey = `${originalKey}/` + `${albumTitle}/${photoName}`;
+      const { albumTitle, photoName, id, isActivated } = photo;
+      const { key, photoKey } = createKeys(
+        albumTitle,
+        photoName,
+        personId,
+        isActivated
+      );
       const thumbnailUrl = await s3Service.createPreSignedUrl(
         key,
         S3Operations.GET_OBJECT
@@ -85,24 +79,22 @@ class PhotosService {
     });
     return await Promise.all(result);
   };
-  getAllPersonPhotos = async (personId: string): Promise<PhotoModel[]> => {
-    const photos = await photosRepository.getAllPersonPhotos(personId);
+  getAllUserPhotos = async (userId: string): Promise<PhotoModel[]> => {
+    const photos = await photosRepository.getAllUserPhotos(userId);
     const result = photos.map(async (photo) => {
       const { isActivated, albumTitle, photoName, id } = photo;
-      let baseKey = PhotoKeys.THUMBNAILS;
-      let originalKey = PhotoKeys.ORIGINAL_PHOTOS;
-      if (!isActivated) {
-        baseKey = PhotoKeys.WATERMARKED_THUMBNAILS;
-        originalKey = PhotoKeys.WATERMARKED_PHOTOS;
-      }
-      const key = `${baseKey}/` + `${albumTitle}/${photoName}`;
-      const originalPhotoKey = `${originalKey}/` + `${albumTitle}/${photoName}`;
+      const { key, photoKey } = createKeys(
+        albumTitle,
+        photoName,
+        userId,
+        isActivated
+      );
       const thumbnailUrl = await s3Service.createPreSignedUrl(
         key,
         S3Operations.GET_OBJECT
       );
       const originalPhotoUrl = await s3Service.createPreSignedUrl(
-        originalPhotoKey,
+        photoKey,
         S3Operations.GET_OBJECT
       );
       return {

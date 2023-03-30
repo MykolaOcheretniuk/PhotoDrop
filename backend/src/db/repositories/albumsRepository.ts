@@ -1,6 +1,7 @@
-import { and, eq } from "drizzle-orm/expressions";
+import { eq, and } from "drizzle-orm/expressions";
 import { Album, albums, InsertAlbum } from "../schema/album";
-import { personAlbums } from "../schema/personAlbum";
+import { photos } from "../schema/photo";
+import { userPhotos } from "../schema/userPhotos";
 import { BaseRepository } from "./baseRepository";
 
 class AlbumsRepository extends BaseRepository<Album | InsertAlbum> {
@@ -11,30 +12,30 @@ class AlbumsRepository extends BaseRepository<Album | InsertAlbum> {
       .where(eq(albums.id, albumId));
     return album[0];
   };
-  associateWithPerson = async (
-    albumId: string,
-    personId: string,
-    isActivated: boolean
-  ) => {
-    await this.db.insert(personAlbums).values({
-      personId: personId,
-      albumId: albumId,
-      isActivated: isActivated,
-    });
-  };
+
   getAllPhotographerAlbums = async (personId: string): Promise<Album[]> => {
+    const result = await this.db
+      .select()
+      .from(albums)
+      .where(eq(albums.photographerId, personId));
+    return result;
+  };
+  getAllUserAlbums = async (userId: string): Promise<Album[]> => {
     const result = await this.db
       .select({
         id: albums.id,
         title: albums.title,
         location: albums.location,
-        createdDate: albums.createdDate,
         dataPicker: albums.dataPicker,
+        createdDate: albums.createdDate,
+        photographerId: albums.photographerId,
         price: albums.price,
       })
-      .from(albums)
-      .leftJoin(personAlbums, eq(personAlbums.albumId, albums.id))
-      .where(eq(personAlbums.personId, personId));
+      .from(userPhotos)
+      .innerJoin(photos, eq(photos.id, userPhotos.photoId))
+      .innerJoin(albums, eq(albums.id, photos.albumId))
+      .where(eq(userPhotos.personId, userId))
+      .groupBy(albums.id);
     return result;
   };
   getByTitle = async (title: string): Promise<Album> => {
@@ -49,18 +50,20 @@ class AlbumsRepository extends BaseRepository<Album | InsertAlbum> {
     albumId: string
   ): Promise<boolean> => {
     const result = await this.db
-      .select({
-        isActivated: personAlbums.isActivated,
-      })
-      .from(personAlbums)
+      .select()
+      .from(photos)
+      .innerJoin(userPhotos, eq(userPhotos.photoId, photos.id))
       .where(
-        and(
-          eq(personAlbums.personId, personId),
-          eq(personAlbums.albumId, albumId)
-        )
+        and(eq(photos.albumId, albumId), eq(userPhotos.personId, personId))
       );
-    const { isActivated } = result[0];
-    return isActivated;
+    if (result.length > 0) {
+      return false;
+    }
+    const { isActivated } = result[0].UserPhotos;
+    if (!isActivated) {
+      return false;
+    }
+    return true;
   };
   isAssociatedWithPerson = async (
     personId: string,
@@ -68,29 +71,22 @@ class AlbumsRepository extends BaseRepository<Album | InsertAlbum> {
   ): Promise<boolean> => {
     const result = await this.db
       .select()
-      .from(personAlbums)
+      .from(photos)
+      .leftJoin(userPhotos, eq(userPhotos.photoId, photos.id))
       .where(
-        and(
-          eq(personAlbums.personId, personId),
-          eq(personAlbums.albumId, albumId)
-        )
+        and(eq(photos.albumId, albumId), eq(userPhotos.personId, personId))
       );
-    if (result[0]) {
-      return true;
+    if (!result[0]) {
+      return false;
     }
-    return false;
+    return true;
   };
   activateAlbum = async (albumId: string, personId: string) => {
     await this.db
-      .update(personAlbums)
-      .set({
-        isActivated: true,
-      })
+      .update(userPhotos)
+      .set({ isActivated: true })
       .where(
-        and(
-          eq(personAlbums.albumId, albumId),
-          eq(personAlbums.personId, personId)
-        )
+        and(eq(userPhotos.albumId, albumId), eq(userPhotos.personId, personId))
       );
   };
 }

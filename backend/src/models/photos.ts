@@ -10,7 +10,7 @@ export interface PhotoDetails {
   albumId: string;
   albumTitle: string;
   photoName: string;
-  isActivated: boolean | null;
+  isActivated: boolean ;
 }
 
 export interface PhotoModel {

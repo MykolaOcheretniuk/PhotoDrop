@@ -8,8 +8,8 @@ export const handler = async (event: S3Event) => {
     const { Records } = event;
     const key = decodeURI(Records[0].s3.object.key).replace("+", " ");
     const splittedKey = key.split("/");
-    const albumTitle = decodeURI(splittedKey[1]).replace("+", " ");
-    const userId = splittedKey[2];
+    const albumTitle = decodeURI(splittedKey[2]).replace("+", " ");
+    const userId = splittedKey[1];
     const photoName = splittedKey[3];
     const album = await albumsService.getByTitle(albumTitle);
     const { id: albumId } = album;

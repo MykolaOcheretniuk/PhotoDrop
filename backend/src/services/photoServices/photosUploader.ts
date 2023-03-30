@@ -12,7 +12,7 @@ export class PhotosUploader {
     }
     const promises = photos.map(async (photo) => {
       const { data, name, type, userId } = photo;
-      const key = `${PhotoKeys.ORIGINAL_PHOTOS}/${album.title}/${userId}/${name}`;
+      const key = `${PhotoKeys.ORIGINAL_PHOTOS}/${userId}/${album.title}/${name}`;
       const buffer = Buffer.from(data, "base64");
       await s3Service.uploadImage(buffer, key, type);
     });
