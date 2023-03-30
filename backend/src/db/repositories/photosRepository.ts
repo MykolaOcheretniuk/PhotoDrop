@@ -1,7 +1,8 @@
-import { eq, and } from "drizzle-orm/expressions";
+import { eq } from "drizzle-orm/expressions";
 import { PhotoDetails } from "src/models/photos";
 import { albums } from "../schema/album";
 import { personAlbums } from "../schema/personAlbum";
+import { personPhotos } from "../schema/personPhoto";
 import { InsertPhoto, Photo, photos } from "../schema/photo";
 import { BaseRepository } from "./baseRepository";
 
@@ -12,17 +13,6 @@ class PhotosRepository extends BaseRepository<Photo | InsertPhoto> {
       .from(photos)
       .where(eq(photos.albumId, albumId));
     return result;
-  };
-  getByNameInAlbum = async (name: string, albumId: string): Promise<Photo> => {
-    const result = await this.db
-      .select()
-      .from(photos)
-      .where(and(eq(photos.photoName, name), eq(photos.albumId, albumId)));
-    return result[0];
-  };
-  getById = async (id: number): Promise<Photo> => {
-    const result = await this.db.select().from(photos).where(eq(photos.id, id));
-    return result[0];
   };
   getAllPersonPhotos = async (personId: string): Promise<PhotoDetails[]> => {
     const result = await this.db
@@ -38,6 +28,12 @@ class PhotosRepository extends BaseRepository<Photo | InsertPhoto> {
       .leftJoin(personAlbums, eq(personAlbums.albumId, albums.id))
       .where(eq(personAlbums.personId, personId));
     return result;
+  };
+  associateWithPerson = async (personId: string, photoId: number) => {
+    await this.db.insert(personPhotos).values({
+      personId: personId,
+      photoId: photoId,
+    });
   };
 }
 

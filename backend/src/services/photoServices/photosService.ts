@@ -13,27 +13,21 @@ class PhotosService {
     key: string,
     albumTitle: string,
     photoName: string,
-    albumId: string
+    albumId: string,
+    userId: string
   ) => {
-    const existingPhoto = await photosRepository.getByNameInAlbum(
-      photoName,
-      albumId
-    );
-    if (existingPhoto) {
-      return;
-    }
     const photoBuffer = await s3Service.getImageBuffer(key);
     const watermarkBuffer = await s3Service.getImageBuffer(
       getEnv("WATERMARK_KEY") as string
     );
     await photoEditor.setWatermark(watermarkBuffer);
     const thumbnailPromise = photoEditor.createThumbnail(photoBuffer);
-    const thumbnailKey = `${PhotoKeys.THUMBNAILS}/${albumTitle}/${photoName}`;
+    const thumbnailKey = `${PhotoKeys.THUMBNAILS}/${albumTitle}/${userId}/${photoName}`;
     const watermarkedPhotoPromise = photoEditor.addWatermark(photoBuffer);
-    const watermarkedPhotoKey = `${PhotoKeys.WATERMARKED_PHOTOS}/${albumTitle}/${photoName}`;
+    const watermarkedPhotoKey = `${PhotoKeys.WATERMARKED_PHOTOS}/${albumTitle}/${userId}/${photoName}`;
     const watermarkedThumbnailPromise =
       photoEditor.createWatermarkedThumbnail(photoBuffer);
-    const watermarkedThumbnailKey = `${PhotoKeys.WATERMARKED_THUMBNAILS}/${albumTitle}/${photoName}`;
+    const watermarkedThumbnailKey = `${PhotoKeys.WATERMARKED_THUMBNAILS}/${albumTitle}/${userId}/${photoName}`;
     const promisesArray = new Array(
       thumbnailPromise,
       watermarkedPhotoPromise,
@@ -52,6 +46,8 @@ class PhotosService {
       photoName: photoName,
     };
     const result = await photosRepository.addNew(photo);
+    const { insertId: photoId } = result[0];
+    await photosRepository.associateWithPerson(userId, photoId);
     return result;
   };
   getAlbumPhotos = async (

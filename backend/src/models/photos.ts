@@ -2,6 +2,7 @@ export interface UploadPhoto {
   name: string;
   type: string;
   data: string;
+  userId: string;
 }
 
 export interface PhotoDetails {

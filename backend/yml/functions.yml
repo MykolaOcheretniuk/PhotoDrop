@@ -55,14 +55,6 @@ UploadSelfie:
         method: post
         cors: true
 
-AssociateClientsWithAlbum:
-  handler: src/lambdas/albums/associateClientsWithAlbum.handler
-  events:
-    - http:
-        path: album/addClients
-        method: post
-        cors: true
-
 AddWatermarkAndThumbnailAddToDb:
   handler: src/lambdas/photos/addPhoto.handler
   events:

@@ -11,8 +11,8 @@ export class PhotosUploader {
       throw ApiError.NotFound("Album");
     }
     const promises = photos.map(async (photo) => {
-      const { data, name, type } = photo;
-      const key = `${PhotoKeys.ORIGINAL_PHOTOS}/${album.title}/${name}`;
+      const { data, name, type, userId } = photo;
+      const key = `${PhotoKeys.ORIGINAL_PHOTOS}/${album.title}/${userId}/${name}`;
       const buffer = Buffer.from(data, "base64");
       await s3Service.uploadImage(buffer, key, type);
     });

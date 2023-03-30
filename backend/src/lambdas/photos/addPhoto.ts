@@ -9,7 +9,8 @@ export const handler = async (event: S3Event) => {
     const key = decodeURI(Records[0].s3.object.key).replace("+", " ");
     const splittedKey = key.split("/");
     const albumTitle = decodeURI(splittedKey[1]).replace("+", " ");
-    const photoName = splittedKey[2];
+    const userId = splittedKey[2];
+    const photoName = splittedKey[3];
     const album = await albumsService.getByTitle(albumTitle);
     const { id: albumId } = album;
     if (!albumId) {
@@ -19,7 +20,8 @@ export const handler = async (event: S3Event) => {
       key,
       albumTitle,
       photoName,
-      albumId
+      albumId,
+      userId
     );
     return { statusCode: 200, body: JSON.stringify(result) };
   } catch (err) {
