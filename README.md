@@ -79,6 +79,15 @@
                 "userId":UUID
             }
         ]
+    }
+
+## Get All Users
+
+    https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/users
+
+    curl --request GET \
+    --url https://1fhuccr2jh.execute-api.us-east-1.amazonaws.com/dev/users \
+    --header 'Authorization: JWT_AUTH_TOKEN'
 
 # Users Actions
 
