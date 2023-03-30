@@ -71,11 +71,12 @@
                 "name": "name.jpg",
                 "type": "image/jpeg",
                 "data": "<base64-encoded-image-data>"
+                "userId":UUID
             },
             {
                 "name": "name2.jpg",
                 "type": "image/jpeg",
-                "data": "<base64-encoded-image-data>"
+                "userId":UUID
             }
         ]
 
