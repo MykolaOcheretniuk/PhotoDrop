@@ -64,9 +64,6 @@ class AuthService {
       return jwtToken;
     }
     const { personId } = user;
-    if (!personId) {
-      throw ApiError.IsNull("Person id");
-    }
     const jwtToken = jwtTokensService.generateAccessToken(personId, Roles.USER);
     await confirmationCodesStorage.deleteCode(phoneNumber);
     return jwtToken;

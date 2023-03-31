@@ -21,15 +21,24 @@ class AlbumsRepository extends BaseRepository<Album | InsertAlbum> {
     return result;
   };
   getAllUserAlbums = async (userId: string): Promise<Album[]> => {
+    const {
+      id,
+      title,
+      location,
+      dataPicker,
+      createdDate,
+      photographerId,
+      price,
+    } = albums;
     const result = await this.db
       .select({
-        id: albums.id,
-        title: albums.title,
-        location: albums.location,
-        dataPicker: albums.dataPicker,
-        createdDate: albums.createdDate,
-        photographerId: albums.photographerId,
-        price: albums.price,
+        id,
+        title,
+        location,
+        dataPicker,
+        createdDate,
+        photographerId,
+        price,
       })
       .from(userPhotos)
       .innerJoin(photos, eq(photos.id, userPhotos.photoId))
