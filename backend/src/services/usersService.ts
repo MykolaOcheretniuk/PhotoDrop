@@ -4,42 +4,21 @@ import rolesRepository from "src/db/repositories/rolesRepository";
 import usersRepository from "src/db/repositories/usersRepository";
 import { InsertPerson } from "src/db/schema/person";
 import { InsertUser, User } from "src/db/schema/user";
-import { S3Operations } from "src/enums/s3Operations";
 import { ApiError } from "src/errors/apiError";
 import { UploadPhoto } from "src/models/photos";
-import { UserModel } from "src/models/users";
 import s3Service from "./awsServices/s3Service";
 
 class UsersService {
-  getAll = async (): Promise<UserModel[]> => {
+  getAllNumbers = async (): Promise<string[]> => {
     const users = await usersRepository.getAll();
-    const userModels = users.map(async (user) => {
-      const { phoneNumber } = user;
-      if (!phoneNumber) {
-        throw ApiError.IsNull(`User phone number.`);
-      }
-      let profilePhotoUrl = null;
-      const { profilePhotoKey } = user;
-      if (profilePhotoKey) {
-        const url = await s3Service.createPreSignedUrl(
-          profilePhotoKey,
-          S3Operations.GET_OBJECT
-        );
-        profilePhotoUrl = url;
-      }
-      return Object.assign({}, user, {
-        profilePhotoUrl: profilePhotoUrl,
-        profilePhotoKey: undefined,
-      });
+    const numbers = users.map(async (user) => {
+      return user.phoneNumber;
     });
-    return await Promise.all(userModels);
+    return await Promise.all(numbers);
   };
   getByPhoneNumber = async (phoneNumber: string): Promise<User> => {
     const user = await usersRepository.getByPhoneNumber(phoneNumber);
     const { fullName, email, phoneNumber: userPhoneNumber } = user;
-    if (!userPhoneNumber) {
-      throw ApiError.IsNull(`User phone number.`);
-    }
     return Object.assign(
       {
         fullName: fullName,

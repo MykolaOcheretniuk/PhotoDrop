@@ -16,7 +16,7 @@ export const handler = async (
     }
     const { Authorization: authToken } = event.headers;
     await authService.checkAuth(authToken, Roles.PHOTOGRAPHER);
-    const users = await usersService.getAll();
+    const users = await usersService.getAllNumbers();
     return responseCreator.default(JSON.stringify(users), 200);
   } catch (err) {
     return responseCreator.error(err);

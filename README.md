@@ -71,12 +71,12 @@
                 "name": "name.jpg",
                 "type": "image/jpeg",
                 "data": "<base64-encoded-image-data>"
-                "userId":UUID
+                "usersPhoneNumbers":["+380999999999","+380888888888"]
             },
             {
                 "name": "name2.jpg",
                 "type": "image/jpeg",
-                "userId":UUID
+                "usersPhoneNumbers":["+380999999999","+380888888888"]
             }
         ]
     }

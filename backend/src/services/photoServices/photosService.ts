@@ -57,14 +57,14 @@ class PhotosService {
     const photos = await photosRepository.getAlbumPhotos(albumId, personId);
     const result = photos.map(async (photo) => {
       const { albumTitle, photoName, id, isActivated } = photo;
-      const { key, photoKey } = createKeys(
+      const { key: thumbnailKey, photoKey } = createKeys(
         albumTitle,
         photoName,
         personId,
         isActivated
       );
       const thumbnailUrl = await s3Service.createPreSignedUrl(
-        key,
+        thumbnailKey,
         S3Operations.GET_OBJECT
       );
       const originalPhotoUrl = await s3Service.createPreSignedUrl(
@@ -83,14 +83,14 @@ class PhotosService {
     const photos = await photosRepository.getAllUserPhotos(userId);
     const result = photos.map(async (photo) => {
       const { isActivated, albumTitle, photoName, id } = photo;
-      const { key, photoKey } = createKeys(
+      const { key: thumbnailKey, photoKey } = createKeys(
         albumTitle,
         photoName,
         userId,
         isActivated
       );
       const thumbnailUrl = await s3Service.createPreSignedUrl(
-        key,
+        thumbnailKey,
         S3Operations.GET_OBJECT
       );
       const originalPhotoUrl = await s3Service.createPreSignedUrl(

@@ -2,7 +2,7 @@ export interface UploadPhoto {
   name: string;
   type: string;
   data: string;
-  userId: string;
+  usersPhoneNumbers : string[];
 }
 
 export interface PhotoDetails {
@@ -10,7 +10,7 @@ export interface PhotoDetails {
   albumId: string;
   albumTitle: string;
   photoName: string;
-  isActivated: boolean ;
+  isActivated: boolean;
 }
 
 export interface PhotoModel {
