@@ -36,10 +36,8 @@ class AlbumsService {
     if (!existingAlbum) {
       throw ApiError.NotFound("Album");
     }
-    const { createdDate } = existingAlbum;
-    return Object.assign(existingAlbum, {
-      createdDate: format(createdDate, "yyyy-MM-dd"),
-    });
+    const { id } = existingAlbum;
+    return { id: id };
   };
   getAllPhotographer = async (photographerId: string): Promise<AlbumInfo[]> => {
     const albums = await albumsRepository.getAllPhotographerAlbums(
@@ -51,6 +49,8 @@ class AlbumsService {
         id: id,
         createdDate: format(createdDate, "yyyy-MM-dd"),
         dataPicker: undefined,
+        photographerId: undefined,
+        price: undefined,
       });
     });
     return result;
