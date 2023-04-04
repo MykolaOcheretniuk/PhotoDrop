@@ -29,7 +29,14 @@ class AlbumsService {
       photographerId: creatorId,
     };
     await albumsRepository.addNew(newAlbum);
-    return newAlbum;
+    const { id, createdDate } = newAlbum;
+    return Object.assign({}, newAlbum, {
+      id: id,
+      createdDate: format(createdDate, "yyyy-MM-dd"),
+      dataPicker: undefined,
+      photographerId: undefined,
+      price: undefined,
+    });
   };
   getById = async (albumId: string) => {
     const existingAlbum = await albumsRepository.getById(albumId);
