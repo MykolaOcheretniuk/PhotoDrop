@@ -15,8 +15,9 @@ export class PhotosUploader {
     if (!album) {
       throw ApiError.NotFound("Album");
     }
-    const promises = photos.map(async (photo) => {
-      const { data, name, type, usersPhoneNumbers } = photo;
+    const uploadPhotoPromises: Promise<void>[] = [];
+    for (let i = 0; i < photos.length; i++) {
+      const { data, name, type, usersPhoneNumbers } = photos[i];
       for (let i = 0; i < usersPhoneNumbers.length; i++) {
         const number = usersPhoneNumbers[i];
         const user = await usersRepository.getByPhoneNumber(number);
@@ -34,18 +35,20 @@ export class PhotosUploader {
           await personsRepository.addNew(newPerson);
           await usersRepository.addNew(newUser);
           const key = `${PhotoKeys.ORIGINAL_PHOTOS}/${userId}/${album.title}/${name}`;
-          const buffer = Buffer.from(data, "base64");
-          await s3Service.uploadImage(buffer, key, type);
+          const dataString = data.replace(/^data:image\/\w+;base64,/, "");
+          const buffer = Buffer.from(dataString, "base64");
+          uploadPhotoPromises.push(s3Service.uploadImage(buffer, key, type));
           continue;
         }
         const { personId: userId } = user;
         const key = `${PhotoKeys.ORIGINAL_PHOTOS}/${userId}/${album.title}/${name}`;
-        const buffer = Buffer.from(data, "base64");
-        await s3Service.uploadImage(buffer, key, type);
+        const dataString = data.replace(/^data:image\/\w+;base64,/, "");
+        const buffer = Buffer.from(dataString, "base64");
+        uploadPhotoPromises.push(s3Service.uploadImage(buffer, key, type));
         continue;
       }
-    });
-    await Promise.all(promises);
+    }
+    await Promise.all(uploadPhotoPromises);
   };
 }
 const photosUploader = new PhotosUploader();
