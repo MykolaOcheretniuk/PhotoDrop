@@ -1,14 +1,10 @@
-import * as bcrypt from "bcryptjs";
+import SHA256 from "crypto-js/sha256";
 class PasswordService {
-  hashPassword = async (password: string): Promise<string> => {
-    const salt = await bcrypt.genSalt(10);
-    return await bcrypt.hash(password, salt);
-  };
-  validatePassword = async (
-    password: string,
-    passwordHash: string
-  ): Promise<boolean> => {
-    return await bcrypt.compare(password, passwordHash);
+  validatePassword = (password: string, passwordHash: string): boolean => {
+    if (SHA256(password).toString() === passwordHash) {
+      return true;
+    }
+    return false;
   };
 }
 const passwordService = new PasswordService();
