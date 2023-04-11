@@ -46,12 +46,13 @@ class PhotosRepository extends BaseRepository<Photo | InsertPhoto> {
   associateWithUser = async (
     personId: string,
     photoId: number,
-    albumId: string
+    albumId: string,
+    isActivated:boolean
   ) => {
     await this.db.insert(userPhotos).values({
       personId: personId,
       photoId: photoId,
-      isActivated: false,
+      isActivated: isActivated,
       albumId: albumId,
     });
   };

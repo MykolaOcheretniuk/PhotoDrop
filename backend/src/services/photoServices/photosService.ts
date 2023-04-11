@@ -7,6 +7,7 @@ import { InsertPhoto } from "src/db/schema/photo";
 import { PhotoModel } from "src/models/photos";
 import { PhotoKeys } from "src/enums/photoKeys";
 import createKeys from "../utils/photoKeysCreator";
+import albumsRepository from "src/db/repositories/albumsRepository";
 
 class PhotosService {
   addNew = async (
@@ -47,7 +48,16 @@ class PhotosService {
     };
     const result = await photosRepository.addNew(photo);
     const { insertId: photoId } = result[0];
-    await photosRepository.associateWithUser(userId, photoId, albumId);
+    const isActivated = await albumsRepository.isAlbumActivated(
+      userId,
+      albumId
+    );
+    await photosRepository.associateWithUser(
+      userId,
+      photoId,
+      albumId,
+      isActivated
+    );
     return result;
   };
   getAlbumPhotos = async (

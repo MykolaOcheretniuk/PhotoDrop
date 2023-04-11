@@ -43,8 +43,7 @@ class AlbumsService {
     if (!existingAlbum) {
       throw ApiError.NotFound("Album");
     }
-    const { id } = existingAlbum;
-    return { id: id };
+    return existingAlbum;
   };
   getAllPhotographer = async (photographerId: string): Promise<AlbumInfo[]> => {
     const albums = await albumsRepository.getAllPhotographerAlbums(

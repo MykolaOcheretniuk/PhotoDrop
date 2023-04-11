@@ -1,4 +1,5 @@
 import { eq, and } from "drizzle-orm/expressions";
+import { activatedAlbums } from "../schema/activatedAlbums";
 import { Album, albums, InsertAlbum } from "../schema/album";
 import { photos } from "../schema/photo";
 import { userPhotos } from "../schema/userPhotos";
@@ -60,16 +61,14 @@ class AlbumsRepository extends BaseRepository<Album | InsertAlbum> {
   ): Promise<boolean> => {
     const result = await this.db
       .select()
-      .from(photos)
-      .innerJoin(userPhotos, eq(userPhotos.photoId, photos.id))
+      .from(activatedAlbums)
       .where(
-        and(eq(photos.albumId, albumId), eq(userPhotos.personId, personId))
+        and(
+          eq(activatedAlbums.personId, personId),
+          eq(activatedAlbums.albumId, albumId)
+        )
       );
-    if (result.length > 0) {
-      return false;
-    }
-    const { isActivated } = result[0].UserPhotos;
-    if (!isActivated) {
+    if (!result[0]) {
       return false;
     }
     return true;
@@ -97,6 +96,9 @@ class AlbumsRepository extends BaseRepository<Album | InsertAlbum> {
       .where(
         and(eq(userPhotos.albumId, albumId), eq(userPhotos.personId, personId))
       );
+    await this.db
+      .insert(activatedAlbums)
+      .values({ personId: personId, albumId: albumId });
   };
 }
 
