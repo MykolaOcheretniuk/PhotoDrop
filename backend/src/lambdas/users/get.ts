@@ -3,6 +3,7 @@ import {
   APIGatewayProxyResult,
 } from "aws-lambda/trigger/api-gateway-proxy";
 import { JwtPayload } from "jsonwebtoken";
+import { Roles } from "src/enums/roles";
 import authService from "src/services/authService";
 import usersService from "src/services/usersService";
 import jwtTokensService from "src/services/utils/jwtTokensService";
@@ -15,25 +16,21 @@ export const handler = async (
     if (!event.headers.Authorization) {
       return responseCreator.missedAuthHeader();
     }
-    if (!event.body) {
-      return responseCreator.missedEventBody();
-    }
     const { Authorization: authToken } = event.headers;
+    await authService.checkAuth(authToken, Roles.USER);
     const tokenPayload = (await jwtTokensService.validateAccessToken(
       authToken
     )) as JwtPayload;
-    const { personId, personRole } = tokenPayload;
-    await authService.checkAuth(authToken, personRole);
+    const { personId } = tokenPayload;
     if (event.pathParameters) {
-      const updateField = event.pathParameters["updateField"] as string;
-      const { data } = JSON.parse(event.body);
+      const updateField = event.pathParameters["getParameter"] as string;
       switch (updateField.toLocaleLowerCase()) {
-        case "email":
-          const emailResult = await usersService.updateEmail(data, personId);
-          return responseCreator.default(JSON.stringify(emailResult), 200);
-        case "name":
-          const nameResult = await usersService.updateName(data, personId);
-          return responseCreator.default(JSON.stringify(nameResult), 200);
+        case "selfie":
+          const profilePhotoUrl = await usersService.getSelfie(personId);
+          return responseCreator.default(JSON.stringify(profilePhotoUrl), 200);
+        case "details":
+          const user = await usersService.getById(personId);
+          return responseCreator.default(JSON.stringify(user), 200);
         default:
           return responseCreator.default(
             JSON.stringify("Incorrect path params"),

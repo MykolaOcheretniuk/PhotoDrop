@@ -5,4 +5,6 @@ export interface LoginAndRegistrationModel {
   phoneNumber: string;
 }
 
-export type UserModel = Omit<User, "profilePhotoKey">;
+
+
+export type UserModel = Omit<User, "profilePhotoKey"|"phoneNumber">;

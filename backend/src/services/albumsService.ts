@@ -104,6 +104,7 @@ class AlbumsService {
       id: id,
       photos: photos,
       createdDate: format(createdDate, "yyyy-MM-dd"),
+      photographerId: undefined,
     });
   };
   getByTitle = async (title: string): Promise<AlbumInfo> => {

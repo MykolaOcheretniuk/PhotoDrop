@@ -25,8 +25,8 @@ export const handler = async (
     )) as JwtPayload;
     await authService.checkAuth(authToken, Roles.USER);
     const body = JSON.parse(event.body);
-    await usersService.uploadSelfie(body, userId);
-    return responseCreator.default("Selfie uploaded", 200);
+    const selfieUrl = await usersService.uploadSelfie(body, userId);
+    return responseCreator.default(JSON.stringify(selfieUrl), 200);
   } catch (err) {
     return responseCreator.error(err);
   }

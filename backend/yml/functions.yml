@@ -68,6 +68,14 @@ GetAllUsers:
         method: get
         cors: true
 
+GetUser:
+  handler: src/lambdas/users/get.handler
+  events:
+    - http:
+        path: user/{getParameter}
+        method: get
+        cors: true
+
 GetConfirmationCode:
   handler: src/lambdas/users/getConfirmationCode.handler
   events:
