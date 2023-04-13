@@ -4,18 +4,20 @@ import { BaseRepository } from "./baseRepository";
 import { eq } from "drizzle-orm/expressions";
 
 class PhotographersRepository extends BaseRepository<Photographer> {
-  getByLogin = async (login: string): Promise<Photographer> => {
+  getByLogin = async (personLogin: string): Promise<Photographer> => {
+    const { passwordHash, login, personId } = photographers;
+    const { email, fullName } = persons;
     const photographer = await this.db
       .select({
-        personId: photographers.personId,
-        login: photographers.login,
-        email: persons.email,
-        fullName: persons.fullName,
-        passwordHash: photographers.passwordHash,
+        personId,
+        login,
+        email,
+        fullName,
+        passwordHash,
       })
       .from(photographers)
       .innerJoin(persons, eq(persons.id, photographers.personId))
-      .where(eq(photographers.login, login));
+      .where(eq(photographers.login, personLogin));
     return photographer[0];
   };
 }

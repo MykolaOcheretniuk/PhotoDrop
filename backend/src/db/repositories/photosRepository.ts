@@ -47,7 +47,7 @@ class PhotosRepository extends BaseRepository<Photo | InsertPhoto> {
     personId: string,
     photoId: number,
     albumId: string,
-    isActivated:boolean
+    isActivated: boolean
   ) => {
     await this.db.insert(userPhotos).values({
       personId: personId,
