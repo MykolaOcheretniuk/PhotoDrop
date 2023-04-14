@@ -1,0 +1,12 @@
+PHOTO_DROP_DB_USERNAME: DB username
+PHOTO_DROP_DB_PASSWORD: any strong password
+PHOTO_DROP_DB_ENDPOINT: photodrop-dev-photodropdb-********.********.us-east-1.rds.amazonaws.com
+PHOTO_DROP_DB_PORT: 3306
+PHOTO_DROP_DB_NAME: PhotoDropDB
+ACCESS_TOKEN_SECRET: 9****531-****-41e7-98d7-4217*****ee1
+BUCKET_NAME: photo-drop-images
+WATERMARK_KEY: watermark/Watermark.png key to s3 file
+TWILIO_ACCOUNT_SID: ACb****18e1afcc37c*****ac*fd****25d
+TWILIO_AUTH_TOKEN: fe****cb0e93c346****f2a****ea***
+STRIPE_PUBLISHABLE_KEY: pk_test_51Mp7ooABBi9aS9FZg****R7vZ9q***4Ta6********42v****Qh****2r******p2c3VzGEL1RCB*****Ny****00uLXysWnO
+STRIPE_SECRET_KEY: sk_test_****7ooABBi9aS9FZmHvIGt90wl5V*****L1Ny****0bWOTUgbYScbVaaRiRHBzr34RSwHS9NFyh****Gd5QcAjET00tIGtQBNh
