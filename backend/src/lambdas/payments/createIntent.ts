@@ -2,12 +2,9 @@ import {
   APIGatewayProxyEvent,
   APIGatewayProxyResult,
 } from "aws-lambda/trigger/api-gateway-proxy";
-import { JwtPayload } from "jsonwebtoken";
 import { Roles } from "src/enums/roles";
 import { PaymentIntentDescription } from "src/models/payments";
 import albumsService from "src/services/albumsService";
-import authService from "src/services/authService";
-import jwtTokensService from "src/services/utils/jwtTokensService";
 import responseCreator from "src/services/utils/responseCreator";
 import stripeService from "src/services/utils/stripeService";
 
@@ -15,19 +12,17 @@ export const handler = async (
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
   try {
-    if (!event.headers.Authorization) {
-      return responseCreator.missedAuthHeader();
+    if (!event.requestContext.authorizer) {
+      return responseCreator.error(400);
     }
-    const { Authorization: authToken } = event.headers;
-    await authService.checkAuth(authToken, Roles.USER);
+    const { personId, role } = event.requestContext.authorizer;
+    if (role !== Roles.USER) {
+      return responseCreator.forbiddenForRole(role);
+    }
     if (event.queryStringParameters) {
       const purchaseObject = event.queryStringParameters;
       if ("albumId" in purchaseObject) {
         const albumId = purchaseObject["albumId"] as string;
-        const tokenPayload = (await jwtTokensService.validateAccessToken(
-          authToken
-        )) as JwtPayload;
-        const { personId } = tokenPayload;
         if (!(await albumsService.isPersonHasAlbum(personId, albumId))) {
           return responseCreator.default(
             JSON.stringify(
@@ -36,7 +31,7 @@ export const handler = async (
             400
           );
         }
-        if ((await albumsService.isAlbumActivated(personId, albumId))) {
+        if (await albumsService.isAlbumActivated(personId, albumId)) {
           return responseCreator.default(
             JSON.stringify(
               `Person with id:${personId} already has album :${albumId}`

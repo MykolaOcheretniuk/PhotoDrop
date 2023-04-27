@@ -1,3 +1,4 @@
+import { Roles } from "src/enums/roles";
 import { ApiError } from "src/errors/apiError";
 import { HEADERS } from "src/lambdas/headers";
 
@@ -42,6 +43,19 @@ class ResponseCreator {
       statusCode: 400,
       headers: HEADERS,
       body: JSON.stringify(`Query string params is missing.`),
+    };
+  };
+  missedRequestAuthorizerContext = () => {
+    return {
+      statusCode: 400,
+      headers: HEADERS,
+      body: JSON.stringify(`Request authorizer context is missing.`),
+    };
+  };
+  forbiddenForRole = (role: Roles) => {
+    return {
+      body: JSON.stringify(`Forbidden for role:${role}`),
+      statusCode: 403,
     };
   };
 }

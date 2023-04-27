@@ -2,26 +2,21 @@ import {
   APIGatewayProxyEvent,
   APIGatewayProxyResult,
 } from "aws-lambda/trigger/api-gateway-proxy";
-import { JwtPayload } from "jsonwebtoken";
 import { Roles } from "src/enums/roles";
-import authService from "src/services/authService";
 import usersService from "src/services/usersService";
-import jwtTokensService from "src/services/utils/jwtTokensService";
 import responseCreator from "src/services/utils/responseCreator";
 
 export const handler = async (
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
   try {
-    if (!event.headers.Authorization) {
-      return responseCreator.missedAuthHeader();
+    if (!event.requestContext.authorizer) {
+      return responseCreator.error(400);
     }
-    const { Authorization: authToken } = event.headers;
-    await authService.checkAuth(authToken, Roles.USER);
-    const tokenPayload = (await jwtTokensService.validateAccessToken(
-      authToken
-    )) as JwtPayload;
-    const { personId } = tokenPayload;
+    const { role, personId } = event.requestContext.authorizer;
+    if (role !== Roles.USER) {
+      return responseCreator.forbiddenForRole(role);
+    }
     if (event.pathParameters) {
       const updateField = event.pathParameters["getParameter"] as string;
       switch (updateField.toLocaleLowerCase()) {

@@ -13,4 +13,7 @@ export class ApiError extends Error {
   static AlreadyExists(entity: string) {
     return new ApiError(`${entity} is already exists!`, 400);
   }
+  static IncorrectRole() {
+    return new ApiError(`Not available your role `, 403);
+  }
 }

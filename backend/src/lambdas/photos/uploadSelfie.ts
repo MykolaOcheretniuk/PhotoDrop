@@ -3,29 +3,25 @@ import {
   APIGatewayProxyResult,
 } from "aws-lambda/trigger/api-gateway-proxy";
 import { Roles } from "src/enums/roles";
-import authService from "src/services/authService";
 import usersService from "src/services/usersService";
-import jwtTokensService from "src/services/utils/jwtTokensService";
-import { JwtPayload } from "jsonwebtoken";
 import responseCreator from "src/services/utils/responseCreator";
 
 export const handler = async (
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
   try {
-    if (!event.headers.Authorization) {
-      return responseCreator.missedAuthHeader();
-    }
     if (!event.body) {
       return responseCreator.missedEventBody();
     }
-    const { Authorization: authToken } = event.headers;
-    const { personId: userId } = (await jwtTokensService.validateAccessToken(
-      authToken
-    )) as JwtPayload;
-    await authService.checkAuth(authToken, Roles.USER);
+    if (!event.requestContext.authorizer) {
+      return responseCreator.error(400);
+    }
+    const { role, personId } = event.requestContext.authorizer;
+    if (role !== Roles.USER) {
+      return responseCreator.forbiddenForRole(role);
+    }
     const body = JSON.parse(event.body);
-    const selfieUrl = await usersService.uploadSelfie(body, userId);
+    const selfieUrl = await usersService.uploadSelfie(body, personId);
     return responseCreator.default(JSON.stringify(selfieUrl), 200);
   } catch (err) {
     return responseCreator.error(err);

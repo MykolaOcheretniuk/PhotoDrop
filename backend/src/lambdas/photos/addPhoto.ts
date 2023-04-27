@@ -14,16 +14,10 @@ export const handler = async (event: S3Event) => {
     const album = await albumsService.getByTitle(albumTitle);
     const { id: albumId } = album;
     if (!albumId) {
-      return { statusCode: 400 };
+      return;
     }
-    const result = await photosService.addNew(
-      key,
-      albumTitle,
-      photoName,
-      albumId,
-      userId
-    );
-    return { statusCode: 200, body: JSON.stringify(result) };
+    await photosService.addNew(key, albumTitle, photoName, albumId, userId);
+    return;
   } catch (err) {
     return responseCreator.error(err);
   }

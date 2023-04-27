@@ -13,14 +13,31 @@ CreateAlbum:
         path: albums
         method: post
         cors: true
+        authorizer:
+          name: AuthorizeUser
+          identitySource: method.request.header.Authorization
 
 GetAlbums:
-  handler: src/lambdas/albums/get.handler
+  handler: src/lambdas/albums/getAll.handler
   events:
     - http:
         path: albums
         method: get
         cors: true
+        authorizer:
+          name: AuthorizeUser
+          identitySource: method.request.header.Authorization
+
+GetAlbum:
+  handler: src/lambdas/albums/getById.handler
+  events:
+    - http:
+        path: album
+        method: get
+        cors: true
+        authorizer:
+          name: AuthorizeUser
+          identitySource: method.request.header.Authorization
 
 UploadPhotos:
   handler: src/lambdas/photos/uploadMany.handler
@@ -29,6 +46,9 @@ UploadPhotos:
         path: photos
         method: post
         cors: true
+        authorizer:
+          name: AuthorizeUser
+          identitySource: method.request.header.Authorization
   memorySize: 1000
   timeout: 10
 
@@ -39,6 +59,9 @@ GetAllPhotos:
         path: photos
         method: get
         cors: true
+        authorizer:
+          name: AuthorizeUser
+          identitySource: method.request.header.Authorization
 
 UploadSelfie:
   handler: src/lambdas/photos/uploadSelfie.handler
@@ -47,6 +70,9 @@ UploadSelfie:
         path: user/selfie
         method: post
         cors: true
+        authorizer:
+          name: AuthorizeUser
+          identitySource: method.request.header.Authorization
 
 AddWatermarkAndThumbnailAddToDb:
   handler: src/lambdas/photos/addPhoto.handler
@@ -67,6 +93,9 @@ GetAllUsers:
         path: users
         method: get
         cors: true
+        authorizer:
+          name: AuthorizeUser
+          identitySource: method.request.header.Authorization
 
 GetUser:
   handler: src/lambdas/users/get.handler
@@ -75,6 +104,9 @@ GetUser:
         path: user/{getParameter}
         method: get
         cors: true
+        authorizer:
+          name: AuthorizeUser
+          identitySource: method.request.header.Authorization
 
 GetConfirmationCode:
   handler: src/lambdas/users/getConfirmationCode.handler
@@ -99,6 +131,9 @@ UserUpdate:
         path: users/{updateField}
         method: put
         cors: true
+        authorizer:
+          name: AuthorizeUser
+          identitySource: method.request.header.Authorization
 
 CreatePayment:
   handler: src/lambdas/payments/createIntent.handler
@@ -107,6 +142,9 @@ CreatePayment:
         path: payment
         method: get
         cors: true
+        authorizer:
+          name: AuthorizeUser
+          identitySource: method.request.header.Authorization
 
 PaymentWebhookHandler:
   handler: src/lambdas/payments/handleWebhook.handler
@@ -115,3 +153,7 @@ PaymentWebhookHandler:
         path: handleWebhook
         method: post
         cors: true
+
+AuthorizeUser:
+  handler: src/lambdas/authorizer.handler
+
