@@ -1,4 +1,3 @@
-import { PaymentError } from "src/errors/payment";
 import { PaymentIntentDescription } from "src/models/payments";
 import Stripe from "stripe";
 import getEnv from "./getEnv";
@@ -7,25 +6,36 @@ class StripeService {
   private stripe = new Stripe(getEnv("STRIPE_SECRET_KEY") as string, {
     apiVersion: "2022-11-15",
   });
-  createIntent = async (
+  createSession = async (
     toPay: number,
     currency: string,
-    paymentTypes: string[],
-    description: PaymentIntentDescription
-  ): Promise<string> => {
-    const paymentIntent = await this.stripe.paymentIntents.create({
-      amount: toPay,
-      currency: currency,
-      payment_method_types: paymentTypes,
-      description: JSON.stringify(description),
+    description: PaymentIntentDescription,
+    productDescription: string
+  ): Promise<string | null> => {
+    const session = await this.stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: [
+        {
+          price_data: {
+            currency: currency,
+            product_data: {
+              name: "Payment",
+              description: `Album: ${productDescription}`,
+            },
+            unit_amount: toPay,
+          },
+          quantity: 1,
+        },
+      ],
+      mode: "payment",
+      success_url: "https://example.com/success",
+      cancel_url: "https://example.com/cancel",
+      payment_intent_data: {
+        description: JSON.stringify(description),
+      },
     });
-    const { client_secret: clientSecret } = paymentIntent;
-    if (!clientSecret) {
-      throw PaymentError.NullClientSecret();
-    }
-    return clientSecret;
+    return session.url;
   };
-
 }
 
 const stripeService = new StripeService();

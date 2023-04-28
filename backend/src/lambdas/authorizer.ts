@@ -33,7 +33,7 @@ export async function handler(
           {
             Action: "execute-api:Invoke",
             Effect: "Allow",
-            Resource: event.methodArn,
+            Resource: "*",
           },
         ],
       },
@@ -51,7 +51,7 @@ export async function handler(
           {
             Action: "execute-api:Invoke",
             Effect: "Deny",
-            Resource: event.methodArn,
+            Resource: "*",
           },
         ],
       },

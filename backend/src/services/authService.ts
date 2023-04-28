@@ -1,8 +1,5 @@
-import { JwtPayload } from "jsonwebtoken";
 import confirmationCodesStorage from "src/db/dynamoDB/confirmationCodesStorage";
-import personsRepository from "src/db/repositories/personsRepository";
 import photographersRepository from "src/db/repositories/photographersRepository";
-import rolesRepository from "src/db/repositories/rolesRepository";
 import usersRepository from "src/db/repositories/usersRepository";
 import { Roles } from "src/enums/roles";
 import { ApiError } from "src/errors/apiError";
@@ -36,19 +33,6 @@ class AuthService {
       Roles.PHOTOGRAPHER
     );
     return tokens;
-  };
-  checkAuth = async (accessToken: string, role: Roles) => {
-    const { personId } = (await jwtTokensService.validateAccessToken(
-      accessToken
-    )) as JwtPayload;
-    const person = await personsRepository.getById(personId);
-    if (!person) {
-      throw ApiError.NotFound("Person");
-    }
-    const { title: roleTitle } = await rolesRepository.personRole(personId);
-    if (roleTitle !== role) {
-      throw PhotographerError.IncorrectRole();
-    }
   };
   loginRegisterUser = async (model: LoginAndRegistrationModel) => {
     const { phoneNumber, confirmationCode } = model;

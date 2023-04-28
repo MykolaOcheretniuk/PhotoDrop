@@ -40,19 +40,19 @@ export const handler = async (
           );
         }
         const existingAlbum = await albumsService.getById(albumId);
-        const { price: albumPrice } = existingAlbum;
+        const { price: albumPrice, title } = existingAlbum;
         const description: PaymentIntentDescription = {
           personId: personId,
           albumId: albumId,
         };
-        const clientSecret = await stripeService.createIntent(
+        const paymentUrl = await stripeService.createSession(
           albumPrice * 100,
           "usd",
-          ["card"],
-          description
+          description,
+          title
         );
         return responseCreator.default(
-          JSON.stringify({ clientSecret: clientSecret }),
+          JSON.stringify({ paymentUrl: paymentUrl }),
           200
         );
       }
